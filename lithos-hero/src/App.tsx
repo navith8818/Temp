@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Menu, ChevronDown, Search, Zap, CreditCard, MessageCircle, 
   Globe, Cpu, Cloud, Shield,
@@ -10,6 +11,7 @@ import {
 } from 'lucide-react';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
+import { useOrder } from './context/OrderContext';
 import baseImage from './assets/Base_Image.jpeg';
 import revealImage from './assets/Reveal_Image.jpeg';
 import worldMapSvg from './assets/World_map_blank_without_borders.svg';
@@ -19,74 +21,21 @@ const BG_IMAGE_2 = revealImage;
 const SPOTLIGHT_R = 260;
 
 function RevealLayer({ image, cursorX, cursorY }: { image: string; cursorX: number; cursorY: number }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [maskDataUrl, setMaskDataUrl] = useState<string>('');
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    
-    window.addEventListener('resize', resize);
-    resize();
-    
-    return () => window.removeEventListener('resize', resize);
-  }, []);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (cursorX === -999 && cursorY === -999) return;
-
-    const gradient = ctx.createRadialGradient(
-      cursorX, cursorY, 0,
-      cursorX, cursorY, SPOTLIGHT_R
-    );
-    
-    gradient.addColorStop(0, 'rgba(255,255,255,1)');
-    gradient.addColorStop(0.4, 'rgba(255,255,255,1)');
-    gradient.addColorStop(0.6, 'rgba(255,255,255,0.75)');
-    gradient.addColorStop(0.75, 'rgba(255,255,255,0.4)');
-    gradient.addColorStop(0.88, 'rgba(255,255,255,0.12)');
-    gradient.addColorStop(1, 'rgba(255,255,255,0)');
-
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-    ctx.arc(cursorX, cursorY, SPOTLIGHT_R, 0, Math.PI * 2);
-    ctx.fill();
-
-    setMaskDataUrl(canvas.toDataURL());
-  }, [cursorX, cursorY]);
+  const isHovered = cursorX !== -999 && cursorY !== -999;
+  const maskStyle = isHovered
+    ? `radial-gradient(circle ${SPOTLIGHT_R}px at ${cursorX}px ${cursorY}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0.3) 70%, transparent 100%)`
+    : 'none';
 
   return (
-    <>
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 pointer-events-none"
-        style={{ display: 'none' }}
-      />
-      <div
-        className="absolute inset-0 bg-center bg-cover bg-no-repeat z-30 pointer-events-none"
-        style={{
-          backgroundImage: `url(${image})`,
-          maskImage: maskDataUrl ? `url(${maskDataUrl})` : 'none',
-          WebkitMaskImage: maskDataUrl ? `url(${maskDataUrl})` : 'none',
-          maskSize: '100% 100%',
-          WebkitMaskSize: '100% 100%',
-          maskRepeat: 'no-repeat',
-          WebkitMaskRepeat: 'no-repeat',
-        }}
-      />
-    </>
+    <div
+      className="absolute inset-0 bg-center bg-cover bg-no-repeat z-30 pointer-events-none transition-opacity duration-150"
+      style={{
+        backgroundImage: `url(${image})`,
+        maskImage: maskStyle,
+        WebkitMaskImage: maskStyle,
+        opacity: isHovered ? 1 : 0,
+      }}
+    />
   );
 }
 
@@ -335,6 +284,13 @@ function FeaturesSection() {
 
 function PricingSection() {
   const { ref, isInView } = useInView();
+  const navigate = useNavigate();
+  const { selectPlan } = useOrder();
+
+  const handleChoosePlan = (planId: string) => {
+    selectPlan(planId);
+    navigate('/order/setup');
+  };
 
   return (
     <section ref={ref} className="bg-[#0a0a0a] py-24 sm:py-32 relative overflow-hidden border-t border-white/5">
@@ -364,7 +320,10 @@ function PricingSection() {
                 </li>
               ))}
             </ul>
-            <button className="w-full py-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-colors">
+            <button 
+              onClick={() => handleChoosePlan('web')}
+              className="w-full py-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all hover:scale-[1.01] active:scale-95 cursor-pointer"
+            >
               Get Started
             </button>
           </div>
@@ -389,7 +348,10 @@ function PricingSection() {
                 </li>
               ))}
             </ul>
-            <button className="w-full py-4 rounded-full bg-[#e8702a] hover:bg-[#d2611f] text-white font-semibold shadow-lg shadow-[#e8702a]/20 transition-all hover:-translate-y-0.5">
+            <button 
+              onClick={() => handleChoosePlan('vps')}
+              className="w-full py-4 rounded-full bg-[#e8702a] hover:bg-[#d2611f] text-white font-semibold shadow-lg shadow-[#e8702a]/20 transition-all hover:-translate-y-0.5 hover:scale-[1.01] active:scale-95 cursor-pointer"
+            >
               Deploy Server
             </button>
           </div>
@@ -667,6 +629,8 @@ function FooterSection() {
 }
 
 export default function App() {
+  const navigate = useNavigate();
+  const { selectPlan } = useOrder();
   const [cursorPos, setCursorPos] = useState({ x: -999, y: -999 });
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
   
@@ -781,7 +745,10 @@ export default function App() {
               <button className="text-white/80 hover:text-white text-[13px] font-medium transition-colors">
                 Contact Sales
               </button>
-              <button className="bg-[#e8702a] hover:bg-[#d2611f] text-white text-[13px] font-semibold px-5 py-2 rounded-full transition-all hover:scale-[1.02] active:scale-95">
+              <button 
+                onClick={() => { selectPlan('web'); navigate('/order/setup'); }}
+                className="bg-[#e8702a] hover:bg-[#d2611f] text-white text-[13px] font-semibold px-5 py-2 rounded-full transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
+              >
                 Start for free
               </button>
             </div>
@@ -1218,7 +1185,10 @@ export default function App() {
           <p className="text-[13px] text-white/60 leading-[1.6]">
             Our integrated systems let you peel back the complexity of hosting management. Automate invoices, track real-time payments, and resolve support tickets instantly from a single dashboard.
           </p>
-          <button className="bg-[#e8702a] hover:bg-[#d2611f] text-white text-[13px] font-semibold py-3 px-6 rounded-full transition-all hover:scale-[1.03] active:scale-95 shadow-lg shadow-[#e8702a]/20 w-fit pointer-events-auto">
+          <button 
+            onClick={() => { selectPlan('web'); navigate('/order/setup'); }}
+            className="bg-[#e8702a] hover:bg-[#d2611f] text-white text-[13px] font-semibold py-3 px-6 rounded-full transition-all hover:scale-[1.03] active:scale-95 shadow-lg shadow-[#e8702a]/20 w-fit pointer-events-auto cursor-pointer"
+          >
             Deploy Now
           </button>
         </div>
