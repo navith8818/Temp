@@ -55,3 +55,55 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+/* Custom themed scrollbars matching dark aesthetic */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232, 112, 42, 0.4) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e8702a;
+}
+
+/* Smooth custom scrollbar for drawers and modals */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232, 112, 42, 0.45) rgba(0, 0, 0, 0.2);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 9999px;
+  margin: 8px 0;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(232, 112, 42, 0.35);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #e8702a;
+  box-shadow: 0 0 8px rgba(232, 112, 42, 0.5);
+}
+

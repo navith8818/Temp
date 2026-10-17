@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  X, Check, CreditCard, Lock,
+  X, CreditCard, Lock,
   Info, ArrowRight, Loader2
 } from 'lucide-react';
 import { useOrder } from '../../context/OrderContext';
@@ -18,6 +18,35 @@ export const Checkout: React.FC = () => {
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const acceptedTerms = true;
+
+  // Card details state
+  const [cardNumber, setCardNumber] = useState('4532 8920 1204 8821');
+  const [cardHolder, setCardHolder] = useState('Alex Jayawardena');
+  const [cardExpiry, setCardExpiry] = useState('08/28');
+  const [cardCvc, setCardCvc] = useState('892');
+  const [saveCard, setSaveCard] = useState(true);
+
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value.replace(/\D/g, '');
+    if (val.length > 16) val = val.slice(0, 16);
+    const parts = val.match(/[\s\S]{1,4}/g) || [];
+    setCardNumber(parts.join(' '));
+  };
+
+  const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value.replace(/\D/g, '');
+    if (val.length > 4) val = val.slice(0, 4);
+    if (val.length > 2) {
+      setCardExpiry(`${val.slice(0, 2)}/${val.slice(2)}`);
+    } else {
+      setCardExpiry(val);
+    }
+  };
+
+  const handleCvcChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+    setCardCvc(val);
+  };
 
   // Calculations
   const baseMonthly = order.plan.priceMonthlyLkr;
@@ -124,7 +153,7 @@ export const Checkout: React.FC = () => {
         </div>
 
         {/* Right Side: Checkout Drawer */}
-        <div className="w-full lg:w-[480px] p-6 sm:p-8 flex flex-col justify-between overflow-y-auto bg-[#101014] relative z-20">
+        <div className="w-full lg:w-[480px] p-6 sm:p-8 flex flex-col justify-between overflow-y-auto custom-scrollbar bg-[#101014] relative z-20">
           
           <div>
             {/* Header */}
@@ -181,22 +210,95 @@ export const Checkout: React.FC = () => {
                 </span>
               </div>
 
-              {/* Payment Dropdown Card */}
-              <div className="bg-[#15151a] border border-white/10 rounded-2xl p-4 space-y-3">
+              {/* Payment Method Details Card */}
+              <div className="bg-[#15151a] border border-white/10 rounded-2xl p-4 space-y-3.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <CreditCard size={18} className="text-[#e8702a]" />
-                    <span className="text-xs font-bold text-white">Credit / Debit Card (Visa, Master, Amex)</span>
+                    <span className="text-xs font-bold text-white">Credit / Debit Card</span>
                   </div>
-                  <Check size={16} className="text-[#e8702a]" />
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold text-white/50">
+                    <span className="bg-white/5 border border-white/10 px-2 py-0.5 rounded">VISA</span>
+                    <span className="bg-white/5 border border-white/10 px-2 py-0.5 rounded">MC</span>
+                    <span className="bg-white/5 border border-white/10 px-2 py-0.5 rounded">AMEX</span>
+                  </div>
                 </div>
 
-                {/* Card Brands Row */}
-                <div className="flex items-center gap-2 pt-1 border-t border-white/5 text-[10px] font-bold text-white/40">
-                  <span className="bg-white/10 px-2 py-0.5 rounded">VISA</span>
-                  <span className="bg-white/10 px-2 py-0.5 rounded">MASTERCARD</span>
-                  <span className="bg-white/10 px-2 py-0.5 rounded">AMEX</span>
-                  <span className="bg-white/10 px-2 py-0.5 rounded">LANKAQR</span>
+                {/* Card Input Fields */}
+                <div className="space-y-3 pt-2 border-t border-white/5">
+                  {/* Card Number */}
+                  <div>
+                    <label className="text-[11px] font-semibold text-white/50 block mb-1">
+                      Card Number
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={cardNumber}
+                        onChange={handleCardNumberChange}
+                        placeholder="4532 0000 0000 0000"
+                        className="w-full bg-[#0a0a0e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#e8702a] transition-colors tracking-wider"
+                      />
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none">
+                        <Lock size={12} className="text-[#e8702a]/60" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Cardholder Name */}
+                  <div>
+                    <label className="text-[11px] font-semibold text-white/50 block mb-1">
+                      Cardholder Name
+                    </label>
+                    <input
+                      type="text"
+                      value={cardHolder}
+                      onChange={(e) => setCardHolder(e.target.value)}
+                      placeholder="Name on card"
+                      className="w-full bg-[#0a0a0e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#e8702a] transition-colors"
+                    />
+                  </div>
+
+                  {/* Expiry & CVC Grid */}
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="text-[11px] font-semibold text-white/50 block mb-1">
+                        Expiry Date
+                      </label>
+                      <input
+                        type="text"
+                        value={cardExpiry}
+                        onChange={handleExpiryChange}
+                        placeholder="MM/YY"
+                        maxLength={5}
+                        className="w-full bg-[#0a0a0e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#e8702a] transition-colors tracking-wider"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-semibold text-white/50 block mb-1">
+                        CVV / CVC
+                      </label>
+                      <input
+                        type="password"
+                        value={cardCvc}
+                        onChange={handleCvcChange}
+                        placeholder="•••"
+                        maxLength={4}
+                        className="w-full bg-[#0a0a0e] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-[#e8702a] transition-colors tracking-widest"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Save Card Checkbox */}
+                  <label className="flex items-center gap-2 pt-1 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={saveCard}
+                      onChange={(e) => setSaveCard(e.target.checked)}
+                      className="w-3.5 h-3.5 rounded bg-[#0a0a0e] border-white/20 text-[#e8702a] focus:ring-[#e8702a] accent-[#e8702a]"
+                    />
+                    <span className="text-[11px] text-white/50">Save card securely for future renewals</span>
+                  </label>
                 </div>
               </div>
 

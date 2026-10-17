@@ -198,7 +198,7 @@ export const OrderModalLayout: React.FC<OrderModalLayoutProps> = ({
           </aside>
 
           {/* Main Stage View */}
-          <main className="flex-1 overflow-y-auto p-8 sm:p-12 relative flex flex-col justify-between">
+          <main className="flex-1 overflow-y-auto custom-scrollbar p-8 sm:p-12 relative flex flex-col justify-between">
             <div className="max-w-[740px] w-full mx-auto">
               {children}
             </div>
