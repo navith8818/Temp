@@ -4,9 +4,7 @@ import {
   Menu, ChevronDown, Search, Zap, CreditCard, MessageCircle, 
   Globe, Cpu, Cloud, Shield,
   DollarSign,
-  FileText, 
-  Code, PenTool, MessageSquare, Briefcase, BarChart, 
-  Calendar, Wrench, RefreshCw, ArrowRight, CheckCircle2, Rocket, HelpCircle,
+  ArrowRight, CheckCircle2,
   Plus, Minus
 } from 'lucide-react';
 import Lenis from 'lenis';
@@ -60,138 +58,78 @@ function FeaturesSection() {
   
   const features = [
     {
-      num: "01",
-      tag: "24/7 SUPPORT",
-      pillIcon: <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse inline-block" />,
-      bgImage: "https://images.unsplash.com/photo-1596524430615-b46475ddff6e?auto=format&fit=crop&q=80&w=400",
       title: "Free 24/7 Expert Support",
       desc: "Get free 24/7 technical support via ticket, email, phone, WhatsApp and live chat, included with every plan. Never pay extra for the guidance you need.",
-      widget: (
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl p-3.5 border border-gray-200/90 shadow-sm w-full max-w-[240px]">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex -space-x-1.5">
-              <div className="w-6 h-6 rounded-full bg-[#e8702a] text-[10px] text-white font-bold flex items-center justify-center border-2 border-white">S1</div>
-              <div className="w-6 h-6 rounded-full bg-gray-800 text-[10px] text-white font-bold flex items-center justify-center border-2 border-white">S2</div>
-              <div className="w-6 h-6 rounded-full bg-emerald-600 text-[10px] text-white font-bold flex items-center justify-center border-2 border-white">S3</div>
-            </div>
-            <span className="text-[10px] font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-              Avg &lt; 2m reply
-            </span>
-          </div>
-          <div className="bg-gray-50 rounded-xl p-2 text-[11px] text-gray-700 leading-snug border border-gray-100 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
-            <span className="truncate font-medium">Engineer assigned to your ticket</span>
-          </div>
-        </div>
+      icon: (
+        <svg viewBox="0 0 80 80" className="w-16 h-16 drop-shadow-sm" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="34" stroke="#dcfce7" strokeWidth="6" strokeLinecap="round" />
+          <path d="M40 6 A34 34 0 1 1 12 58" stroke="#65a30d" strokeWidth="6" strokeLinecap="round" />
+          <path d="M40 0 L46 8 L34 8 Z" fill="#65a30d" />
+          <text x="40" y="47" textAnchor="middle" fill="#334155" fontSize="22" fontWeight="800" fontFamily="sans-serif">24</text>
+          <line x1="40" y1="53" x2="40" y2="58" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" />
+        </svg>
       )
     },
     {
-      num: "02",
-      tag: "WEEKLY LABS",
-      pillIcon: <span className="w-2 h-2 rounded-full bg-[#e8702a] inline-block" />,
-      bgImage: "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400",
       title: "Saturday Live Help Sessions",
       desc: "Book a spot in our weekly Saturday live sessions for interactive setup assistance and real-time troubleshooting with our support team.",
-      widget: (
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl p-3.5 border border-gray-200/90 shadow-sm w-full max-w-[240px]">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-bold text-gray-900 uppercase tracking-wider bg-gray-100 px-2 py-0.5 rounded-md">
-              Every Saturday
-            </span>
-            <span className="text-[10px] font-semibold text-[#e8702a] flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#e8702a] animate-ping" />
-              10:00 AM
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-[11px] text-gray-600 bg-orange-50/60 rounded-xl p-2 border border-orange-100/80">
-            <span className="font-semibold text-gray-900">Live 1-on-1 Q&A</span>
-            <span className="text-[10px] text-[#e8702a] font-bold bg-white px-2 py-0.5 rounded shadow-2xs">Free Access</span>
-          </div>
-        </div>
+      icon: (
+        <svg viewBox="0 0 80 80" className="w-16 h-16 drop-shadow-sm" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="34" stroke="#ffedd5" strokeWidth="6" strokeLinecap="round" />
+          <path d="M40 6 A34 34 0 1 1 14 56" stroke="#ea580c" strokeWidth="6" strokeLinecap="round" />
+          <rect x="25" y="27" width="30" height="26" rx="6" stroke="#334155" strokeWidth="3" fill="none" />
+          <line x1="25" y1="36" x2="55" y2="36" stroke="#334155" strokeWidth="2.5" />
+          <circle cx="34" cy="44" r="2.5" fill="#ea580c" />
+          <circle cx="46" cy="44" r="2.5" fill="#ea580c" />
+        </svg>
       )
     },
     {
-      num: "03",
-      tag: "COMPLIANCE",
-      pillIcon: <CheckCircle2 size={12} className="text-emerald-500 inline-block" />,
-      bgImage: "https://images.unsplash.com/photo-1555949963-aa79dcee57d5?auto=format&fit=crop&q=80&w=400",
       title: "100% Licensed Software",
       desc: "Zero nulled or grey-market tools. Every control panel, security tool, and management utility runs on 100% genuine software licences.",
-      widget: (
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl p-3.5 border border-gray-200/90 shadow-sm w-full max-w-[240px]">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0">
-              <CheckCircle2 size={12} />
-            </div>
-            <span className="text-[11px] font-bold text-gray-900">Authentic Software Seal</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-[9px] font-mono text-gray-500 bg-gray-50 p-1.5 rounded-lg border border-gray-100">
-            <span className="text-emerald-600 font-bold">VERIFIED:</span>
-            <span>LIC-2026-cPanel-OK</span>
-          </div>
-        </div>
+      icon: (
+        <svg viewBox="0 0 80 80" className="w-16 h-16 drop-shadow-sm" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="34" stroke="#e0f2fe" strokeWidth="6" strokeLinecap="round" />
+          <path d="M40 6 A34 34 0 1 1 14 56" stroke="#0284c7" strokeWidth="6" strokeLinecap="round" />
+          <path d="M40 24 L52 28 V38 C52 46 47 52 40 55 C33 52 28 46 28 38 V28 Z" fill="#e0f2fe" stroke="#0284c7" strokeWidth="3" strokeLinejoin="round" />
+          <path d="M35 39 L39 43 L46 34" stroke="#0284c7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       )
     },
     {
-      num: "04",
-      tag: "COMMUNITY",
-      pillIcon: <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />,
-      bgImage: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=400",
       title: "Creator & Community Perks",
       desc: "Unlock exclusive hosting discounts for Sri Lankan students and academic clubs, new startups, and web agencies and freelancers.",
-      widget: (
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl p-3.5 border border-gray-200/90 shadow-sm w-full max-w-[240px]">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-              Special Grant
-            </span>
-            <span className="text-[11px] font-black text-[#e8702a]">Up to 70% Off</span>
-          </div>
-          <p className="text-[10px] text-gray-500 font-medium truncate">Students · Startups · Dev Agencies</p>
-        </div>
+      icon: (
+        <svg viewBox="0 0 80 80" className="w-16 h-16 drop-shadow-sm" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="34" stroke="#fef3c7" strokeWidth="6" strokeLinecap="round" />
+          <path d="M40 6 A34 34 0 1 1 14 56" stroke="#d97706" strokeWidth="6" strokeLinecap="round" />
+          <path d="M40 25 L44 34 L54 35 L46 42 L49 52 L40 46 L31 52 L34 42 L26 35 L36 34 Z" fill="#fde68a" stroke="#d97706" strokeWidth="2.5" strokeLinejoin="round" />
+        </svg>
       )
     },
     {
-      num: "05",
-      tag: "ACTIVE SHIELD",
-      pillIcon: <Shield size={12} className="text-[#e8702a] inline-block" />,
-      bgImage: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=400",
       title: "Advanced cPGuard Security",
       desc: "Keep your site safe with automated malware scanning, real-time threat isolation, and automated malware removal at no additional cost.",
-      widget: (
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl p-3.5 border border-gray-200/90 shadow-sm w-full max-w-[240px]">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-              <span className="text-[10px] font-bold text-gray-900 uppercase">WAF Active</span>
-            </div>
-            <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">0 Threats</span>
-          </div>
-          <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
-            <div className="bg-emerald-500 h-full rounded-full w-full" />
-          </div>
-        </div>
+      icon: (
+        <svg viewBox="0 0 80 80" className="w-16 h-16 drop-shadow-sm" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="34" stroke="#dcfce7" strokeWidth="6" strokeLinecap="round" />
+          <path d="M40 6 A34 34 0 1 1 14 56" stroke="#16a34a" strokeWidth="6" strokeLinecap="round" />
+          <path d="M40 23 L54 28 V38 C54 48 48 53 40 57 C32 53 26 48 26 38 V28 Z" fill="#dcfce7" stroke="#16a34a" strokeWidth="3" strokeLinejoin="round" />
+          <path d="M36 39 L40 43 L46 35" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       )
     },
     {
-      num: "06",
-      tag: "GLOBAL ROUTING",
-      pillIcon: <Globe size={12} className="text-blue-500 inline-block" />,
-      bgImage: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=400",
       title: "Local Care, European Power",
       desc: "Experience dedicated 24/7 local support backed by high-speed enterprise data centres in London for reliable uptime and fast performance.",
-      widget: (
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl p-3.5 border border-gray-200/90 shadow-sm w-full max-w-[240px]">
-          <div className="flex items-center justify-between text-[11px] font-bold text-gray-900 mb-1.5">
-            <span className="flex items-center gap-1">🇬🇧 London</span>
-            <span className="text-gray-400 font-mono text-[10px]">⟷</span>
-            <span className="flex items-center gap-1">🇱🇰 Colombo</span>
-          </div>
-          <div className="flex items-center justify-between text-[10px] text-gray-500 bg-gray-50 rounded-lg px-2 py-1 border border-gray-100">
-            <span>Enterprise SLA</span>
-            <span className="font-semibold text-blue-600">99.99% Uptime</span>
-          </div>
-        </div>
+      icon: (
+        <svg viewBox="0 0 80 80" className="w-16 h-16 drop-shadow-sm" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="34" stroke="#ede9fe" strokeWidth="6" strokeLinecap="round" />
+          <path d="M40 6 A34 34 0 1 1 14 56" stroke="#7c3aed" strokeWidth="6" strokeLinecap="round" />
+          <circle cx="40" cy="40" r="14" stroke="#7c3aed" strokeWidth="3" />
+          <ellipse cx="40" cy="40" rx="7" ry="14" stroke="#7c3aed" strokeWidth="2.5" />
+          <line x1="26" y1="40" x2="54" y2="40" stroke="#7c3aed" strokeWidth="2.5" />
+        </svg>
       )
     }
   ];
@@ -205,9 +143,8 @@ function FeaturesSection() {
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
         <div className={`max-w-3xl mb-20 scroll-hidden ${isInView ? 'scroll-visible' : ''}`}>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#e8702a]/10 border border-[#e8702a]/20 mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#e8702a]" />
-            <span className="text-[#e8702a] font-semibold tracking-wider uppercase text-xs">Features & Infrastructure</span>
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#e8702a] text-white shadow-sm mb-5">
+            <span className="font-bold tracking-wider uppercase text-[11px]">FEATURES & INFRASTRUCTURE</span>
           </div>
           <h3 className="text-4xl sm:text-5xl font-bold text-gray-900 tracking-tight leading-tight">
             Why Choose <span className="font-playfair italic text-[#e8702a]">Server Salad</span> for High-Performance Hosting?
@@ -218,59 +155,23 @@ function FeaturesSection() {
           {features.map((f, i) => (
             <div 
               key={i} 
-              className={`relative overflow-hidden rounded-[32px] p-8 sm:p-9 min-h-[380px] bg-gradient-to-b from-white via-white/95 to-[#f8f9fb] border border-gray-200/80 hover:border-[#e8702a]/40 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:-translate-y-2 transition-all duration-500 scroll-hidden flex flex-col justify-between text-left group ${isInView ? 'scroll-visible' : ''}`}
-              style={{ transitionDelay: `${i * 100}ms` }}
+              className={`relative bg-white rounded-[32px] p-9 min-h-[320px] shadow-[0_10px_35px_-5px_rgba(0,0,0,0.06),0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_45px_-8px_rgba(0,0,0,0.1)] hover:-translate-y-1.5 transition-all duration-300 scroll-hidden flex flex-col justify-start text-left border border-gray-100 ${isInView ? 'scroll-visible' : ''}`}
+              style={{ transitionDelay: `${i * 90}ms` }}
             >
-              {/* Top Accent Gradient Border */}
-              <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-transparent to-transparent group-hover:via-[#e8702a] transition-all duration-500" />
-
-              {/* Blended Background Image - Bottom Right */}
-              <div 
-                className="absolute -bottom-8 -right-8 w-56 h-56 opacity-10 mix-blend-multiply group-hover:scale-110 group-hover:opacity-20 transition-all duration-700 pointer-events-none"
-                style={{ 
-                  backgroundImage: `url('${f.bgImage}')`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  maskImage: 'radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%)',
-                  WebkitMaskImage: 'radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%)'
-                }}
-              />
-
-              {/* Top Card Section: Eyebrow + Monospace Number */}
-              <div className="relative z-10 mb-8">
-                <div className="flex items-center justify-between mb-5">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-gray-200/80 text-[10px] font-bold tracking-wider uppercase text-gray-700 shadow-2xs group-hover:border-[#e8702a]/30 transition-colors">
-                    {f.pillIcon}
-                    {f.tag}
-                  </span>
-                  <span className="font-mono text-xs font-bold text-gray-400 group-hover:text-[#e8702a] transition-colors">
-                    {f.num}
-                  </span>
-                </div>
-
-                {/* Title & Description: Top Left Aligned */}
-                <h4 className="text-xl sm:text-[22px] font-bold text-gray-900 mb-3 tracking-tight leading-snug group-hover:text-black transition-colors">
-                  {f.title}
-                </h4>
-                <p className="text-gray-600 leading-relaxed text-sm">
-                  {f.desc}
-                </p>
+              {/* Top Circular Progress Icon matching sample card */}
+              <div className="mb-8">
+                {f.icon}
               </div>
 
-              {/* Bottom Card Section: Interactive Micro-Widget + Hover link */}
-              <div className="relative z-10 pt-4 flex flex-col gap-4">
-                <div className="flex justify-end transform group-hover:scale-[1.03] group-hover:-translate-y-1 transition-transform duration-500">
-                  {f.widget}
-                </div>
+              {/* Title matching deep navy/slate style */}
+              <h4 className="text-[22px] font-extrabold text-[#111827] mb-4 tracking-tight leading-snug">
+                {f.title}
+              </h4>
 
-                <div className="flex items-center justify-between pt-3 border-t border-gray-100 text-xs font-semibold text-gray-400 group-hover:text-[#e8702a] transition-colors">
-                  <span className="flex items-center gap-1.5">
-                    <span>Learn more</span>
-                    <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
-                  </span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-gray-200 group-hover:bg-[#e8702a] transition-colors" />
-                </div>
-              </div>
+              {/* Description matching sample text color & spacing */}
+              <p className="text-[#374151] leading-relaxed text-[15px] font-normal">
+                {f.desc}
+              </p>
             </div>
           ))}
         </div>
@@ -726,12 +627,6 @@ export default function App() {
               >
                 Pricing
               </button>
-              <button 
-                className={`flex items-center gap-1 text-[13px] font-medium transition-colors ${hoveredMenu === 'documentation' ? 'text-white' : 'text-white/80 hover:text-white'}`}
-                onMouseEnter={() => setHoveredMenu('documentation')}
-              >
-                Documentation <ChevronDown size={14} className="opacity-50" />
-              </button>
             </div>
 
             {/* Right Actions */}
@@ -900,164 +795,6 @@ export default function App() {
                   <button className="bg-white text-[#e8702a] text-[13px] font-bold px-5 py-2.5 rounded-full hover:bg-gray-50 transition-colors">
                     Talk to an expert
                   </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Documentation Mega Menu */}
-          <div className={`absolute top-full left-0 right-0 pt-3 transition-all duration-300 origin-top transform ${hoveredMenu === 'documentation' ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'} z-10`}>
-            <div className="bg-[#111111]/95 backdrop-blur-3xl border border-white/5 rounded-3xl shadow-2xl overflow-hidden flex">
-              <div className="flex-1 p-8 grid grid-cols-4 gap-8">
-                
-                {/* Using Server Salad */}
-                <div className="flex flex-col">
-                  <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">Using Server Salad</span>
-                  <div className="flex flex-col gap-6">
-                    <div className="flex gap-4 cursor-pointer group">
-                      <div className="w-9 h-9 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-lg flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                        <FileText size={16} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Docs</span>
-                        <span className="text-[12px] text-white/50 mt-0.5">Browse product docs</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 cursor-pointer group">
-                      <div className="w-9 h-9 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-lg flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                        <Code size={16} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">API</span>
-                        <span className="text-[12px] text-white/50 mt-0.5">Automate API endpoints</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 cursor-pointer group">
-                      <div className="w-9 h-9 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-lg flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                        <PenTool size={16} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Developer Tools</span>
-                        <span className="text-[12px] text-white/50 mt-0.5">Test and debug</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Insights */}
-                <div className="flex flex-col">
-                  <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">Insights</span>
-                  <div className="flex flex-col gap-6">
-                    <div className="flex gap-4 cursor-pointer group">
-                      <div className="w-9 h-9 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-lg flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                        <MessageSquare size={16} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Blog</span>
-                        <span className="text-[12px] text-white/50 mt-0.5">Read product updates</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 cursor-pointer group">
-                      <div className="w-9 h-9 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-lg flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                        <Briefcase size={16} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Case studies</span>
-                        <span className="text-[12px] text-white/50 mt-0.5">See how we help you win</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 cursor-pointer group">
-                      <div className="w-9 h-9 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-lg flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                        <BarChart size={16} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Reports</span>
-                        <span className="text-[12px] text-white/50 mt-0.5">See the research</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Community */}
-                <div className="flex flex-col">
-                  <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">Community</span>
-                  <div className="flex flex-col gap-6">
-                    <div className="flex gap-4 cursor-pointer group">
-                      <div className="w-9 h-9 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-lg flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                        <Calendar size={16} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Events</span>
-                        <span className="text-[12px] text-white/50 mt-0.5">See upcoming events</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 cursor-pointer group">
-                      <div className="w-9 h-9 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-lg flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                        <Rocket size={16} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Startup Program</span>
-                        <span className="text-[12px] text-white/50 mt-0.5">Grow with Server Salad</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 cursor-pointer group">
-                      <div className="w-9 h-9 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-lg flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                        <MessageCircle size={16} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Discord</span>
-                        <span className="text-[12px] text-white/50 mt-0.5">Connect with developers</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Help */}
-                <div className="flex flex-col">
-                  <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">Help</span>
-                  <div className="flex flex-col gap-6">
-                    <div className="flex gap-4 cursor-pointer group">
-                      <div className="w-9 h-9 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-lg flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                        <HelpCircle size={16} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Help center</span>
-                        <span className="text-[12px] text-white/50 mt-0.5">Find answers fast</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 cursor-pointer group">
-                      <div className="w-9 h-9 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-lg flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                        <Wrench size={16} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Support</span>
-                        <span className="text-[12px] text-white/50 mt-0.5">Get help 24/7</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 cursor-pointer group">
-                      <div className="w-9 h-9 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-lg flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                        <RefreshCw size={16} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Changelog</span>
-                        <span className="text-[12px] text-white/50 mt-0.5">Read what's new</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
-              <div className="w-[300px] p-8 border-l border-white/5 flex flex-col">
-                <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">Service Status</span>
-                <div className="flex-1 bg-gradient-to-br from-[#e8702a] to-[#a3440e] rounded-2xl p-6 flex flex-col cursor-pointer group hover:opacity-90 transition-opacity">
-                  <span className="text-[15px] font-bold text-white mb-3">Server Salad status page</span>
-                  <span className="text-[13px] text-white/90 leading-relaxed mb-6">
-                    Track uptime, service availability, incidents and maintenances across the platform and services.
-                  </span>
-                  <div className="mt-auto flex items-center gap-2 text-white text-[13px] font-semibold">
-                    See live status <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                  </div>
                 </div>
               </div>
             </div>
