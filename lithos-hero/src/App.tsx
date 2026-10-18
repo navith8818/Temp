@@ -1137,35 +1137,38 @@ export default function App() {
         </div>
 
         {/* Left Side 3 Cards */}
-        <div className="hidden lg:flex absolute top-[48%] -translate-y-1/2 left-10 md:left-[10%] flex-col gap-4 z-50 pointer-events-none">
+        <div className="hidden lg:flex absolute top-[62%] -translate-y-1/2 left-10 md:left-[10%] flex-col gap-4 z-50 pointer-events-none">
           
-          <div className="pointer-events-auto cursor-pointer group flex items-center gap-3.5 bg-[#111111]/90 backdrop-blur-xl border border-white/5 p-2 pr-8 rounded-full hero-anim hero-fade shadow-2xl w-max hover:bg-[#1a1a1a]/95 hover:border-white/15 hover:-translate-y-1 hover:shadow-black/50 transition-all duration-300" style={{ animationDelay: '0.5s' }}>
-            <div className="w-11 h-11 bg-[#e8702a]/15 rounded-full flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:scale-110 group-hover:bg-[#e8702a]/25 transition-all duration-300">
-              <Zap size={20} className="fill-[#e8702a]/20" />
+          {/* Card 1 — Automated WHM */}
+          <div className="pointer-events-auto cursor-pointer group flex items-center gap-3 bg-[#111111]/90 backdrop-blur-xl border border-white/5 p-2.5 pr-6 rounded-2xl hero-anim hero-fade shadow-2xl w-max hover:bg-[#1a1a1a]/95 hover:border-white/15 hover:-translate-y-1 hover:shadow-black/50 transition-all duration-300" style={{ animationDelay: '0.5s' }}>
+            <div className="w-10 h-10 bg-[#e8702a] rounded-full flex items-center justify-center text-white flex-shrink-0 group-hover:scale-110 group-hover:brightness-110 transition-all duration-300 shadow-lg shadow-[#e8702a]/30">
+              <Zap size={18} className="fill-white/30" />
             </div>
             <div className="flex flex-col">
-              <span className="text-white font-semibold text-[13px] group-hover:text-[#e8702a] transition-colors duration-300">Automated WHM</span>
-              <span className="text-white/40 text-[11px] font-medium mt-0.5 group-hover:text-white/60 transition-colors duration-300">Zero-touch cPanel creation</span>
+              <span className="text-white font-bold text-[13px] group-hover:text-[#e8702a] transition-colors duration-300">Automated WHM</span>
+              <span className="text-white/50 text-[11px] font-medium mt-0.5 group-hover:text-white/70 transition-colors duration-300">Zero-touch cPanel creation</span>
             </div>
           </div>
 
-          <div className="pointer-events-auto cursor-pointer group flex items-center gap-3.5 bg-[#111111]/90 backdrop-blur-xl border border-white/5 p-2 pr-8 rounded-full hero-anim hero-fade shadow-2xl w-max ml-10 hover:bg-[#1a1a1a]/95 hover:border-white/15 hover:-translate-y-1 hover:shadow-black/50 transition-all duration-300" style={{ animationDelay: '0.6s' }}>
-            <div className="w-11 h-11 bg-[#3b82f6]/15 rounded-full flex items-center justify-center text-[#3b82f6] flex-shrink-0 group-hover:scale-110 group-hover:bg-[#3b82f6]/25 transition-all duration-300">
-              <CreditCard size={18} className="fill-[#3b82f6]/20" />
+          {/* Card 2 — Smart Billing (indented) */}
+          <div className="pointer-events-auto cursor-pointer group flex items-center gap-3 bg-[#111111]/90 backdrop-blur-xl border border-white/5 p-2.5 pr-6 rounded-2xl hero-anim hero-fade shadow-2xl w-max ml-10 hover:bg-[#1a1a1a]/95 hover:border-white/15 hover:-translate-y-1 hover:shadow-black/50 transition-all duration-300" style={{ animationDelay: '0.6s' }}>
+            <div className="w-10 h-10 bg-[#e8702a] rounded-full flex items-center justify-center text-white flex-shrink-0 group-hover:scale-110 group-hover:brightness-110 transition-all duration-300 shadow-lg shadow-[#e8702a]/30">
+              <CreditCard size={17} className="fill-white/30" />
             </div>
             <div className="flex flex-col">
-              <span className="text-white font-semibold text-[13px] group-hover:text-[#3b82f6] transition-colors duration-300">Smart Billing</span>
-              <span className="text-white/40 text-[11px] font-medium mt-0.5 group-hover:text-white/60 transition-colors duration-300">Invoices & suspension auto-sync</span>
+              <span className="text-white font-bold text-[13px] group-hover:text-[#e8702a] transition-colors duration-300">Smart Billing</span>
+              <span className="text-white/50 text-[11px] font-medium mt-0.5 group-hover:text-white/70 transition-colors duration-300">Invoices & suspension auto-sync</span>
             </div>
           </div>
 
-          <div className="pointer-events-auto cursor-pointer group flex items-center gap-3.5 bg-[#111111]/90 backdrop-blur-xl border border-white/5 p-2 pr-8 rounded-full hero-anim hero-fade shadow-2xl w-max hover:bg-[#1a1a1a]/95 hover:border-white/15 hover:-translate-y-1 hover:shadow-black/50 transition-all duration-300" style={{ animationDelay: '0.7s' }}>
-            <div className="w-11 h-11 bg-[#10b981]/15 rounded-full flex items-center justify-center text-[#10b981] flex-shrink-0 group-hover:scale-110 group-hover:bg-[#10b981]/25 transition-all duration-300">
-              <MessageCircle size={20} className="fill-[#10b981]/20" />
+          {/* Card 3 — Unified Support */}
+          <div className="pointer-events-auto cursor-pointer group flex items-center gap-3 bg-[#111111]/90 backdrop-blur-xl border border-white/5 p-2.5 pr-6 rounded-2xl hero-anim hero-fade shadow-2xl w-max hover:bg-[#1a1a1a]/95 hover:border-white/15 hover:-translate-y-1 hover:shadow-black/50 transition-all duration-300" style={{ animationDelay: '0.7s' }}>
+            <div className="w-10 h-10 bg-[#e8702a] rounded-full flex items-center justify-center text-white flex-shrink-0 group-hover:scale-110 group-hover:brightness-110 transition-all duration-300 shadow-lg shadow-[#e8702a]/30">
+              <MessageCircle size={18} className="fill-white/30" />
             </div>
             <div className="flex flex-col">
-              <span className="text-white font-semibold text-[13px] group-hover:text-[#10b981] transition-colors duration-300">Unified Support</span>
-              <span className="text-white/40 text-[11px] font-medium mt-0.5 group-hover:text-white/60 transition-colors duration-300">Live chat & ticketing system</span>
+              <span className="text-white font-bold text-[13px] group-hover:text-[#e8702a] transition-colors duration-300">Unified Support</span>
+              <span className="text-white/50 text-[11px] font-medium mt-0.5 group-hover:text-white/70 transition-colors duration-300">Live chat & ticketing system</span>
             </div>
           </div>
 
