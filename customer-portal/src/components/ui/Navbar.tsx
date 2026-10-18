@@ -77,11 +77,6 @@ export const Navbar: React.FC = () => {
 
           {/* Right Actions */}
           <div className="flex items-center gap-2.5">
-            {/* System Status Pill */}
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/60 text-[11px] font-medium text-emerald-700">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>All Systems Operational</span>
-            </div>
 
             {/* Notification Bell Popover */}
             <NotificationsPopover />
