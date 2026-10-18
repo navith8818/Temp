@@ -3,10 +3,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bell } from 'lucide-react';
+import { NotificationsPopover } from '@/components/navigation/NotificationsPopover';
+import { useAccount } from '@/context/AccountContext';
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
+  const { profile } = useAccount();
 
   return (
     <header className="pt-3 px-4 sm:px-6 shrink-0 z-30 w-full">
@@ -61,9 +63,6 @@ export const Navbar: React.FC = () => {
             >
               Products & Plans
             </Link>
-            <span className="text-gray-400 hover:text-gray-800 text-xs font-medium px-3 py-1 cursor-pointer">
-              DNS Zones
-            </span>
             <Link
               href="/billing"
               className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
@@ -84,22 +83,22 @@ export const Navbar: React.FC = () => {
               <span>All Systems Operational</span>
             </div>
 
-            {/* Notification Bell */}
-            <button
-              type="button"
-              className="w-7 h-7 rounded-full flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer"
-              aria-label="View notifications"
-            >
-              <Bell className="w-3.5 h-3.5" />
-            </button>
+            {/* Notification Bell Popover */}
+            <NotificationsPopover />
 
-            {/* User Profile Avatar */}
-            <div
-              className="w-7 h-7 rounded-full bg-[#fcf5f1] border border-[#e8702a]/30 flex items-center justify-center text-xs font-bold text-[#e8702a] select-none cursor-pointer hover:border-[#e8702a] transition-colors"
-              title="Customer Account: usr_salad_84"
+            {/* User Profile Avatar Link directly navigating to /profile */}
+            <Link
+              href="/profile"
+              className={`w-8 h-8 rounded-full bg-[#fcf5f1] border flex items-center justify-center text-xs font-bold text-[#e8702a] select-none cursor-pointer transition-all focus:outline-none ${
+                pathname === '/profile'
+                  ? 'border-[#e8702a] ring-2 ring-[#e8702a]/30 shadow-xs'
+                  : 'border-[#e8702a]/40 hover:border-[#e8702a]'
+              }`}
+              title={`Account Settings: ${profile.name} (${profile.email})`}
+              aria-label="User Profile & Account Settings"
             >
-              SS
-            </div>
+              {profile.initials}
+            </Link>
           </div>
         </nav>
       </div>
