@@ -202,6 +202,17 @@ export const Login: React.FC = () => {
             </button>
           </form>
 
+          {/* Operator Link to Admin Portal */}
+          <div className="mt-5 pt-4 border-t border-white/5 flex items-center justify-between text-xs">
+            <span className="text-white/40">Hosting Operations Staff?</span>
+            <Link
+              to="/admin"
+              className="text-[#e8702a] hover:text-[#ff8642] font-semibold transition-colors flex items-center gap-1"
+            >
+              Admin Portal &rarr;
+            </Link>
+          </div>
+
         </div>
 
         {/* Card Footer Info */}

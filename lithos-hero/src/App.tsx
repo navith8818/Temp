@@ -745,6 +745,7 @@ export default function App() {
               >
                 Sign In
               </button>
+              
               <button 
                 onClick={() => navigate('/login')}
                 className="bg-[#e8702a] hover:bg-[#d2611f] text-white text-[13px] font-semibold px-5 py-2 rounded-full transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
@@ -1043,6 +1044,7 @@ export default function App() {
                         <span className="text-[12px] text-white/50 mt-0.5">Read what's new</span>
                       </div>
                     </div>
+                    
                   </div>
                 </div>
 
