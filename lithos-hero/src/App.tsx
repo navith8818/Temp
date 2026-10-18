@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Menu, ChevronDown, Search, Zap, CreditCard, MessageCircle, 
   Globe, Cpu, Cloud, Shield,
-  Gamepad2, Database, ShoppingCart, DollarSign, Video,
-  GraduationCap, Store, Server, Smartphone, FileText, 
+  DollarSign,
+  FileText, 
   Code, PenTool, MessageSquare, Briefcase, BarChart, 
   Calendar, Wrench, RefreshCw, ArrowRight, CheckCircle2, Rocket, HelpCircle,
   Plus, Minus
@@ -855,88 +855,43 @@ export default function App() {
               <div className="flex-1 p-8 pr-12 flex flex-col">
                 <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">By Industry</span>
                 <div className="grid grid-cols-3 gap-x-8 gap-y-8">
-                  <div className="flex gap-4 cursor-pointer group">
-                    <div className="w-10 h-10 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-xl flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                      <Gamepad2 size={18} />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Gaming</span>
-                      <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Keep lag out of play</span>
-                    </div>
+                  <div className="flex flex-col cursor-pointer group">
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Gaming</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Keep lag out of play</span>
                   </div>
-                  <div className="flex gap-4 cursor-pointer group">
-                    <div className="w-10 h-10 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-xl flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                      <Video size={18} />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Media & Streaming</span>
-                      <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Stream live and on demand</span>
-                    </div>
+                  <div className="flex flex-col cursor-pointer group">
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Media & Streaming</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Stream live and on demand</span>
                   </div>
-                  <div className="flex gap-4 cursor-pointer group">
-                    <div className="w-10 h-10 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-xl flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                      <Store size={18} />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Ecommerce & Retail</span>
-                      <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Keep carts moving at peak</span>
-                    </div>
+                  <div className="flex flex-col cursor-pointer group">
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Ecommerce & Retail</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Keep carts moving at peak</span>
                   </div>
 
-                  <div className="flex gap-4 cursor-pointer group">
-                    <div className="w-10 h-10 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-xl flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                      <Database size={18} />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">ERP Hosting</span>
-                      <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Keep critical systems running</span>
-                    </div>
+                  <div className="flex flex-col cursor-pointer group">
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">ERP Hosting</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Keep critical systems running</span>
                   </div>
-                  <div className="flex gap-4 cursor-pointer group">
-                    <div className="w-10 h-10 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-xl flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                      <DollarSign size={18} />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Fintech</span>
-                      <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Keep payments & apps reachable</span>
-                    </div>
+                  <div className="flex flex-col cursor-pointer group">
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Fintech</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Keep payments & apps reachable</span>
                   </div>
-                  <div className="flex gap-4 cursor-pointer group">
-                    <div className="w-10 h-10 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-xl flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                      <Server size={18} />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Hosting Providers</span>
-                      <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Protect every tenant you host</span>
-                    </div>
+                  <div className="flex flex-col cursor-pointer group">
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Hosting Providers</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Protect every tenant you host</span>
                   </div>
 
-                  <div className="flex gap-4 cursor-pointer group">
-                    <div className="w-10 h-10 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-xl flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                      <ShoppingCart size={18} />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Ecommerce Agencies</span>
-                      <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Build ecommerce sites that scale</span>
-                    </div>
+                  <div className="flex flex-col cursor-pointer group">
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Ecommerce Agencies</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Build ecommerce sites that scale</span>
                   </div>
-                  <div className="flex gap-4 cursor-pointer group">
-                    <div className="w-10 h-10 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-xl flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                      <GraduationCap size={18} />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Online Education</span>
-                      <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Deliver seamless learning online</span>
-                    </div>
+                  <div className="flex flex-col cursor-pointer group">
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Online Education</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Deliver seamless learning online</span>
                   </div>
-                  <div className="flex gap-4 cursor-pointer group">
-                    <div className="w-10 h-10 border border-[#e8702a]/30 bg-[#e8702a]/10 rounded-xl flex items-center justify-center text-[#e8702a] flex-shrink-0 group-hover:bg-[#e8702a]/20 transition-colors">
-                      <Smartphone size={18} />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">iGaming</span>
-                      <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Power every high-stakes moment</span>
-                    </div>
+                  <div className="flex flex-col cursor-pointer group">
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">iGaming</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Power every high-stakes moment</span>
                   </div>
                 </div>
                 
