@@ -129,30 +129,7 @@ export const AdminTopBar: React.FC<AdminTopBarProps> = ({ onToggleDrawer }) => {
               </div>
             )}
           </div>
-
-          {/* Reset Demo Data Button */}
-          <button
-            onClick={resetDemoData}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 text-xs font-medium transition-colors cursor-pointer"
-            title="Reset all mock data to clean demo state"
-          >
-            <RotateCcw className="w-3.5 h-3.5 text-gray-500" />
-            <span className="hidden xl:inline">Reset Demo</span>
-          </button>
-
-          {/* Customer Portal Link */}
-          <a
-            href="http://localhost:3000"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-            title="View customer portal"
-          >
-            <ExternalLink className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">Customer Portal</span>
-          </a>
         </div>
-
       </div>
     </header>
   );
