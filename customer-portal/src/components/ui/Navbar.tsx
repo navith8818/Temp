@@ -64,9 +64,16 @@ export const Navbar: React.FC = () => {
             <span className="text-gray-400 hover:text-gray-800 text-xs font-medium px-3 py-1 cursor-pointer">
               DNS Zones
             </span>
-            <span className="text-gray-400 hover:text-gray-800 text-xs font-medium px-3 py-1 cursor-pointer">
+            <Link
+              href="/billing"
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                pathname === '/billing'
+                  ? 'bg-gray-100 text-gray-900 font-semibold'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
               Billing
-            </span>
+            </Link>
           </div>
 
           {/* Right Actions */}
