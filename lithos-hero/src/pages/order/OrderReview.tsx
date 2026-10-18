@@ -33,16 +33,12 @@ export const OrderReview: React.FC = () => {
         </div>
 
         {/* Association Tree Card (matches Screenshot 3 structure) */}
-        <div className="bg-[#121217] border border-white/10 rounded-3xl p-7 relative overflow-hidden shadow-xl">
+        <div className="bg-[#121217] border border-white/10 rounded-3xl p-7 relative overflow-hidden">
           
-          {/* Subtle decorative circles in bottom-right matching screenshot */}
-          <div className="absolute -bottom-16 -right-16 w-56 h-56 bg-gradient-to-br from-[#e8702a]/20 to-blue-600/20 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-8 -right-8 w-40 h-40 bg-blue-500/10 rounded-full blur-xl pointer-events-none" />
-
           {/* Root Domain Header */}
           <div className="flex items-center justify-between pb-6 border-b border-white/10 relative z-10">
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <div className="w-10 h-10 rounded-xl bg-[#e8702a]/10 border border-[#e8702a]/20 flex items-center justify-center text-[#e8702a]">
                 <Globe size={20} />
               </div>
               <div>

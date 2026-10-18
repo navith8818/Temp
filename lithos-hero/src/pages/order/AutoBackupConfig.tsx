@@ -34,7 +34,7 @@ export const AutoBackupConfig: React.FC = () => {
           onClick={toggleAutoBackup}
           className={`p-7 rounded-3xl border transition-all cursor-pointer relative ${
             order.includeAutoBackup
-              ? 'bg-[#141418] border-[#e8702a] shadow-xl shadow-[#e8702a]/10 ring-1 ring-[#e8702a]/40'
+              ? 'bg-[#141418] border-[#e8702a]'
               : 'bg-[#111115] border-white/5 hover:border-white/15'
           }`}
         >

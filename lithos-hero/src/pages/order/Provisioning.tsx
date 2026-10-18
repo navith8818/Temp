@@ -41,16 +41,11 @@ export const Provisioning: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex items-center justify-center p-6 text-white font-sans">
-      
-      {/* Ambient background glows */}
-      <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] bg-[#e8702a]/15 rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/3 w-[500px] h-[500px] bg-[#e8702a]/5 rounded-full blur-[150px] pointer-events-none" />
-
-      <div className="relative w-full max-w-[620px] bg-[#0f0f14] border border-white/10 rounded-[32px] p-8 sm:p-10 shadow-2xl space-y-8">
+      <div className="relative w-full max-w-[620px] bg-[#0f0f14] border border-white/10 rounded-[32px] p-8 sm:p-10 space-y-8">
         
         {/* Top Header */}
         <div className="text-center space-y-3">
-          <div className="w-16 h-16 rounded-3xl bg-[#e8702a]/15 border border-[#e8702a]/30 text-[#e8702a] flex items-center justify-center mx-auto shadow-lg shadow-[#e8702a]/20">
+          <div className="w-16 h-16 rounded-3xl bg-[#e8702a]/15 border border-[#e8702a]/30 text-[#e8702a] flex items-center justify-center mx-auto">
             <Server size={30} className="animate-pulse" />
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">

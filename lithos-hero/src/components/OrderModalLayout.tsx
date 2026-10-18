@@ -81,17 +81,13 @@ export const OrderModalLayout: React.FC<OrderModalLayoutProps> = ({
 
   return (
     <div className="fixed inset-0 z-[200] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-      {/* Background ambient glow matching theme */}
-      <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-[#e8702a]/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-10 right-1/4 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[140px] pointer-events-none" />
-
       {/* Main Modal Container */}
-      <div className="relative w-full max-w-[1240px] h-[92vh] min-h-[640px] bg-[#0e0e11] border border-white/10 rounded-[28px] shadow-2xl flex flex-col overflow-hidden text-white font-sans">
+      <div className="relative w-full max-w-[1240px] h-[92vh] min-h-[640px] bg-[#0e0e11] border border-white/10 rounded-[28px] flex flex-col overflow-hidden text-white font-sans">
         
         {/* Top Header */}
         <div className="h-16 px-8 border-b border-white/5 flex items-center justify-between flex-shrink-0 z-20">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#e8702a] to-[#d2611f] flex items-center justify-center text-white shadow-lg shadow-[#e8702a]/20">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#e8702a] to-[#d2611f] flex items-center justify-center text-white">
               <svg width="18" height="18" viewBox="0 0 256 256" fill="currentColor">
                 <path d="M 256 256 L 128 256 L 0 128 L 128 128 Z M 256 128 L 128 128 L 0 0 L 128 0 Z" />
               </svg>
@@ -121,7 +117,7 @@ export const OrderModalLayout: React.FC<OrderModalLayoutProps> = ({
             <div>
               {/* Selected Hosting Product Header */}
               <div className="flex items-start gap-3 mb-10 pb-6 border-b border-white/5">
-                <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#e8702a] flex-shrink-0 shadow-inner">
+                <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#e8702a] flex-shrink-0">
                   <Layers size={20} />
                 </div>
                 <div>
@@ -149,9 +145,9 @@ export const OrderModalLayout: React.FC<OrderModalLayoutProps> = ({
                         {/* Step Circle Node with Solid Opaque Background */}
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 z-10 ${
                           isCurrent 
-                            ? 'bg-[#e8702a] text-white ring-4 ring-[#e8702a]/20 shadow-lg shadow-[#e8702a]/30 scale-105'
+                            ? 'bg-[#e8702a] text-white'
                             : isCompleted
-                            ? 'bg-[#18110b] text-[#e8702a] border border-[#e8702a]/60 shadow-sm'
+                            ? 'bg-[#18110b] text-[#e8702a] border border-[#e8702a]/60'
                             : 'bg-[#141418] text-white/40 border border-white/10'
                         }`}>
                           {isCompleted ? (
@@ -164,7 +160,7 @@ export const OrderModalLayout: React.FC<OrderModalLayoutProps> = ({
                         {/* Connector line between this node and the next node - stops completely at node 5 */}
                         {!isLast && (
                           <div className={`w-[2px] h-7 my-1 rounded-full transition-colors duration-300 ${
-                            idx < currentIdx ? 'bg-[#e8702a] shadow-[0_0_6px_rgba(232,112,42,0.4)]' : 'bg-white/10'
+                            idx < currentIdx ? 'bg-[#e8702a]' : 'bg-white/10'
                           }`} />
                         )}
                       </div>
@@ -266,7 +262,7 @@ export const OrderModalLayout: React.FC<OrderModalLayoutProps> = ({
               className={`px-8 py-3 rounded-full text-sm font-bold flex items-center gap-2 transition-all cursor-pointer ${
                 nextDisabled
                   ? 'bg-white/10 text-white/30 cursor-not-allowed'
-                  : 'bg-[#e8702a] hover:bg-[#d2611f] text-white shadow-lg shadow-[#e8702a]/25 hover:scale-[1.02] active:scale-95'
+                  : 'bg-[#e8702a] hover:bg-[#d2611f] text-white hover:scale-[1.02] active:scale-95'
               }`}
             >
               <span>{nextLabel}</span>

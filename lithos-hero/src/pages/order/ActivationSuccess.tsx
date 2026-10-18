@@ -26,16 +26,11 @@ export const ActivationSuccess: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex items-center justify-center p-6 text-white font-sans overflow-y-auto">
-      
-      {/* Ambient background glows */}
-      <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-[#e8702a]/15 rounded-full blur-[160px] pointer-events-none" />
-      <div className="absolute bottom-10 right-1/4 w-[500px] h-[500px] bg-[#e8702a]/10 rounded-full blur-[140px] pointer-events-none" />
-
-      <div className="relative w-full max-w-[700px] bg-[#0e0e13] border border-white/10 rounded-[32px] p-8 sm:p-12 shadow-2xl space-y-8 my-auto">
+      <div className="relative w-full max-w-[700px] bg-[#0e0e13] border border-white/10 rounded-[32px] p-8 sm:p-12 space-y-8 my-auto">
         
         {/* Celebration Header */}
         <div className="text-center space-y-3">
-          <div className="w-16 h-16 rounded-full bg-[#e8702a]/15 border border-[#e8702a]/30 text-[#e8702a] flex items-center justify-center mx-auto shadow-xl shadow-[#e8702a]/20">
+          <div className="w-16 h-16 rounded-full bg-[#e8702a]/15 border border-[#e8702a]/30 text-[#e8702a] flex items-center justify-center mx-auto">
             <CheckCircle2 size={36} className="stroke-[2.5]" />
           </div>
           <span className="text-xs font-bold uppercase tracking-widest text-[#e8702a]">

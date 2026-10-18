@@ -218,14 +218,11 @@ function FeaturesSection() {
           {features.map((f, i) => (
             <div 
               key={i} 
-              className={`relative overflow-hidden rounded-[32px] p-8 sm:p-9 min-h-[380px] bg-gradient-to-b from-white via-white/95 to-[#f8f9fb] border border-gray-200/80 hover:border-[#e8702a]/40 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_24px_50px_rgba(232,112,42,0.1),0_2px_8px_rgba(0,0,0,0.04)] hover:-translate-y-2 transition-all duration-500 scroll-hidden flex flex-col justify-between text-left group ${isInView ? 'scroll-visible' : ''}`}
+              className={`relative overflow-hidden rounded-[32px] p-8 sm:p-9 min-h-[380px] bg-gradient-to-b from-white via-white/95 to-[#f8f9fb] border border-gray-200/80 hover:border-[#e8702a]/40 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:-translate-y-2 transition-all duration-500 scroll-hidden flex flex-col justify-between text-left group ${isInView ? 'scroll-visible' : ''}`}
               style={{ transitionDelay: `${i * 100}ms` }}
             >
               {/* Top Accent Gradient Border */}
               <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-transparent to-transparent group-hover:via-[#e8702a] transition-all duration-500" />
-              
-              {/* Subtle Ambient Glow */}
-              <div className="absolute -bottom-16 -right-16 w-52 h-52 bg-[#e8702a]/10 rounded-full blur-2xl group-hover:bg-[#e8702a]/20 group-hover:scale-125 transition-all duration-700 pointer-events-none" />
 
               {/* Blended Background Image - Bottom Right */}
               <div 
@@ -329,7 +326,7 @@ function PricingSection() {
           </div>
 
           {/* VPS Hosting */}
-          <div className={`bg-gradient-to-b from-[#1a1310] to-[#111111] border border-[#e8702a]/30 rounded-[32px] p-10 relative shadow-[0_0_40px_rgba(232,112,42,0.1)] scroll-hidden ${isInView ? 'scroll-visible' : ''}`} style={{ transitionDelay: '150ms' }}>
+          <div className={`bg-gradient-to-b from-[#1a1310] to-[#111111] border border-[#e8702a]/30 rounded-[32px] p-10 relative scroll-hidden ${isInView ? 'scroll-visible' : ''}`} style={{ transitionDelay: '150ms' }}>
             <div className="absolute top-0 right-10 -translate-y-1/2 bg-[#e8702a] text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wide">
               Most Popular
             </div>
@@ -350,7 +347,7 @@ function PricingSection() {
             </ul>
             <button 
               onClick={() => handleChoosePlan('vps')}
-              className="w-full py-4 rounded-full bg-[#e8702a] hover:bg-[#d2611f] text-white font-semibold shadow-lg shadow-[#e8702a]/20 transition-all hover:-translate-y-0.5 hover:scale-[1.01] active:scale-95 cursor-pointer"
+              className="w-full py-4 rounded-full bg-[#e8702a] hover:bg-[#d2611f] text-white font-semibold transition-all hover:-translate-y-0.5 hover:scale-[1.01] active:scale-95 cursor-pointer"
             >
               Deploy Server
             </button>
@@ -742,20 +739,27 @@ export default function App() {
               <button className="text-white/60 hover:text-white transition-colors">
                 <Search size={16} />
               </button>
-              <button className="text-white/80 hover:text-white text-[13px] font-medium transition-colors">
-                Contact Sales
+              <button 
+                onClick={() => navigate('/login')}
+                className="text-white/80 hover:text-white text-[13px] font-medium transition-colors cursor-pointer"
+              >
+                Sign In
               </button>
               <button 
-                onClick={() => { selectPlan('web'); navigate('/order/setup'); }}
+                onClick={() => navigate('/login')}
                 className="bg-[#e8702a] hover:bg-[#d2611f] text-white text-[13px] font-semibold px-5 py-2 rounded-full transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
               >
-                Start for free
+                Get Started
               </button>
             </div>
             
             {/* Mobile Menu */}
             <div className="lg:hidden flex items-center">
-              <button className="text-white p-1">
+              <button 
+                onClick={() => navigate('/login')}
+                className="text-white p-1 cursor-pointer"
+                aria-label="Account"
+              >
                 <Menu size={24} />
               </button>
             </div>
@@ -1187,7 +1191,7 @@ export default function App() {
           </p>
           <button 
             onClick={() => { selectPlan('web'); navigate('/order/setup'); }}
-            className="bg-[#e8702a] hover:bg-[#d2611f] text-white text-[13px] font-semibold py-3 px-6 rounded-full transition-all hover:scale-[1.03] active:scale-95 shadow-lg shadow-[#e8702a]/20 w-fit pointer-events-auto cursor-pointer"
+            className="bg-[#e8702a] hover:bg-[#d2611f] text-white text-[13px] font-semibold py-3 px-6 rounded-full transition-all hover:scale-[1.03] active:scale-95 w-fit pointer-events-auto cursor-pointer"
           >
             Deploy Now
           </button>

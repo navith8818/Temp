@@ -105,18 +105,15 @@ export const Checkout: React.FC = () => {
         }
       `}</style>
 
-      {/* Background ambient lighting */}
-      <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-[#e8702a]/10 rounded-full blur-[140px] pointer-events-none" />
-
       {/* Main Container: Split Stage */}
-      <div className="relative w-full max-w-[1280px] h-[92vh] min-h-[660px] bg-[#0c0c0f] border border-white/10 rounded-[28px] shadow-2xl flex overflow-hidden text-white font-sans">
+      <div className="relative w-full max-w-[1280px] h-[92vh] min-h-[660px] bg-[#0c0c0f] border border-white/10 rounded-[28px] flex overflow-hidden text-white font-sans">
         
         {/* Left Side: Brand Atmosphere Stage */}
         <div className="hidden lg:flex flex-1 flex-col items-center justify-center p-12 relative overflow-hidden bg-gradient-to-b from-[#0e0e13] to-[#070709] border-r border-white/5 text-center">
           
           {/* Top Logo */}
           <div className="absolute top-8 left-8 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-[#e8702a] flex items-center justify-center text-white shadow-lg shadow-[#e8702a]/30">
+            <div className="w-8 h-8 rounded-xl bg-[#e8702a] flex items-center justify-center text-white">
               <svg width="18" height="18" viewBox="0 0 256 256" fill="currentColor">
                 <path d="M 256 256 L 128 256 L 0 128 L 128 128 Z M 256 128 L 128 128 L 0 0 L 128 0 Z" />
               </svg>
@@ -127,14 +124,14 @@ export const Checkout: React.FC = () => {
           {/* Central 2 Floating Brand Spheres */}
           <div className="relative mb-8 flex items-center justify-center w-56 h-56">
             {/* Primary Sphere */}
-            <div className="w-44 h-44 rounded-full bg-gradient-to-tr from-[#180e07] via-[#26150b] to-[#0d0d12] shadow-2xl shadow-[#e8702a]/20 border border-[#e8702a]/30 relative flex items-center justify-center animate-float-sphere-1">
+            <div className="w-44 h-44 rounded-full bg-gradient-to-tr from-[#180e07] via-[#26150b] to-[#0d0d12] border border-[#e8702a]/30 relative flex items-center justify-center animate-float-sphere-1">
               <div className="w-28 h-28 rounded-full bg-gradient-to-b from-[#e8702a]/35 via-[#e8702a]/10 to-transparent blur-lg" />
               {/* Subtle specular reflection */}
               <div className="absolute top-4 left-6 w-12 h-6 rounded-full bg-white/10 blur-[3px] transform -rotate-12" />
             </div>
 
             {/* Secondary Overlapping Floating Sphere */}
-            <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[#e8702a]/35 via-[#1d1008]/85 to-[#0e0e14]/95 backdrop-blur-md absolute -top-2 left-6 border border-[#e8702a]/40 shadow-xl shadow-[#e8702a]/20 animate-float-sphere-2 flex items-center justify-center">
+            <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[#e8702a]/35 via-[#1d1008]/85 to-[#0e0e14]/95 backdrop-blur-md absolute -top-2 left-6 border border-[#e8702a]/40 animate-float-sphere-2 flex items-center justify-center">
               <div className="w-16 h-16 rounded-full bg-[#e8702a]/25 blur-md" />
             </div>
           </div>
@@ -408,7 +405,7 @@ export const Checkout: React.FC = () => {
             <button
               onClick={handlePayNow}
               disabled={isSubmitting}
-              className="w-full py-3.5 rounded-full bg-[#e8702a] hover:bg-[#d2611f] text-white font-bold text-sm shadow-lg shadow-[#e8702a]/30 transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01] active:scale-95"
+              className="w-full py-3.5 rounded-full bg-[#e8702a] hover:bg-[#d2611f] text-white font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01] active:scale-95"
             >
               {isSubmitting ? (
                 <>

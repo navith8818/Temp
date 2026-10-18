@@ -29,12 +29,12 @@ export const HostingSetup: React.FC = () => {
             onClick={() => setSetupMode('new')}
             className={`relative p-8 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between ${
               order.setupMode === 'new'
-                ? 'bg-[#141418] border-[#e8702a] shadow-xl shadow-[#e8702a]/10 ring-1 ring-[#e8702a]/40'
+                ? 'bg-[#141418] border-[#e8702a]'
                 : 'bg-[#111115] border-white/5 hover:border-white/15 hover:bg-[#141418]'
             }`}
           >
             {order.setupMode === 'new' && (
-              <div className="absolute top-5 right-5 bg-[#e8702a] text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-sm">
+              <div className="absolute top-5 right-5 bg-[#e8702a] text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
                 Recommended
               </div>
             )}
@@ -59,7 +59,7 @@ export const HostingSetup: React.FC = () => {
             onClick={() => setSetupMode('migrate')}
             className={`relative p-8 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between ${
               order.setupMode === 'migrate'
-                ? 'bg-[#141418] border-[#e8702a] shadow-xl shadow-[#e8702a]/10 ring-1 ring-[#e8702a]/40'
+                ? 'bg-[#141418] border-[#e8702a]'
                 : 'bg-[#111115] border-white/5 hover:border-white/15 hover:bg-[#141418]'
             }`}
           >

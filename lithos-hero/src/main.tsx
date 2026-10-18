@@ -11,6 +11,8 @@ import { OrderReview } from './pages/order/OrderReview';
 import { Checkout } from './pages/order/Checkout';
 import { Provisioning } from './pages/order/Provisioning';
 import { ActivationSuccess } from './pages/order/ActivationSuccess';
+import { Login } from './pages/auth/Login';
+import { Register } from './pages/auth/Register';
 import './index.css';
 
 createRoot(document.getElementById('app')!).render(
@@ -20,6 +22,10 @@ createRoot(document.getElementById('app')!).render(
         <Routes>
           {/* Main Website Landing Page */}
           <Route path="/" element={<App />} />
+
+          {/* Authentication */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
           {/* Hosting Order Workflow */}
           <Route path="/order/setup" element={<HostingSetup />} />

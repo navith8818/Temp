@@ -104,6 +104,5 @@
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #e8702a;
-  box-shadow: 0 0 8px rgba(232, 112, 42, 0.5);
 }
 

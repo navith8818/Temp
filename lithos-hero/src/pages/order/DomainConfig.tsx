@@ -160,7 +160,7 @@ export const DomainConfig: React.FC = () => {
                   type="button"
                   onClick={() => setDomainType('external')}
                   className={`py-2 text-xs font-semibold rounded-lg transition-all ${
-                    domainType === 'external' ? 'bg-[#e8702a] text-white shadow' : 'text-white/60 hover:text-white'
+                    domainType === 'external' ? 'bg-[#e8702a] text-white' : 'text-white/60 hover:text-white'
                   }`}
                 >
                   Existing / External Domain (Free)
@@ -169,7 +169,7 @@ export const DomainConfig: React.FC = () => {
                   type="button"
                   onClick={() => setDomainType('registered')}
                   className={`py-2 text-xs font-semibold rounded-lg transition-all ${
-                    domainType === 'registered' ? 'bg-[#e8702a] text-white shadow' : 'text-white/60 hover:text-white'
+                    domainType === 'registered' ? 'bg-[#e8702a] text-white' : 'text-white/60 hover:text-white'
                   }`}
                 >
                   Register New (+LKR 3,850/yr)
@@ -194,7 +194,7 @@ export const DomainConfig: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-xl bg-[#e8702a] hover:bg-[#d2611f] text-white text-xs font-bold transition-all shadow-md cursor-pointer"
+                className="w-full py-2.5 rounded-xl bg-[#e8702a] hover:bg-[#d2611f] text-white text-xs font-bold transition-all cursor-pointer"
               >
                 Confirm &amp; Add Domain
               </button>
