@@ -27,9 +27,10 @@ export default function NewHostingPage() {
   const handleSelectPlan = (planName: string) => {
     toast(
       'Plan Selected',
-      `${planName} selected in ${regions.find((r) => r.id === selectedRegion)?.name}. Ready for backend order submission.`,
+      `${planName} selected in ${regions.find((r) => r.id === selectedRegion)?.name}. Redirecting to order setup...`,
       'info'
     );
+    window.location.href = 'http://localhost:5173/order/setup';
   };
 
   return (
@@ -122,37 +123,54 @@ export default function NewHostingPage() {
         </section>
 
         {/* Section 2: Choose Hosting Plan - Full Plan Comparison */}
-        <section className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <section className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-1">
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-wider text-gray-500">
-                2. Choose Hosting Plan
+              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                2. CHOOSE HOSTING PLAN
               </h2>
-              <p className="text-xs text-gray-400 mt-0.5">Instant provisioning upon checkout with 14-day money back guarantee</p>
+              <p className="text-xs text-slate-400 mt-1">
+                Instant provisioning upon checkout with 14-day money back guarantee
+              </p>
             </div>
 
-            {/* Billing Cycle Toggle */}
-            <div className="inline-flex items-center gap-3 self-start sm:self-auto bg-white p-1.5 px-3 rounded-full border border-gray-200 shadow-xs">
-              <span className={`text-xs font-medium cursor-pointer ${billingPeriod === 'monthly' ? 'text-gray-900 font-bold' : 'text-gray-500'}`} onClick={() => setBillingPeriod('monthly')}>
+            {/* Billing Cycle Toggle - Match Screenshot */}
+            <div className="inline-flex items-center gap-2.5 self-start sm:self-auto bg-white py-1.5 px-3.5 rounded-full border border-gray-200/90 shadow-2xs">
+              <span
+                className={`text-xs cursor-pointer select-none transition-colors ${
+                  billingPeriod === 'monthly' ? 'text-slate-800 font-semibold' : 'text-slate-400 font-medium'
+                }`}
+                onClick={() => setBillingPeriod('monthly')}
+              >
                 Monthly
               </span>
+
+              {/* Orange Pill Switch */}
               <button
                 type="button"
                 onClick={() => setBillingPeriod(billingPeriod === 'monthly' ? 'annual' : 'monthly')}
-                className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out bg-[#e8702a] focus:outline-none"
+                className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out bg-[#e8702a] focus:outline-none"
               >
                 <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition duration-200 ease-in-out ${
                     billingPeriod === 'annual' ? 'translate-x-5' : 'translate-x-0'
                   }`}
                 />
               </button>
-              <div className="flex items-center gap-1.5 cursor-pointer" onClick={() => setBillingPeriod('annual')}>
-                <span className={`text-xs font-medium ${billingPeriod === 'annual' ? 'text-gray-900 font-bold' : 'text-gray-500'}`}>
+
+              <div
+                className="flex items-center gap-2 cursor-pointer select-none"
+                onClick={() => setBillingPeriod('annual')}
+              >
+                <span
+                  className={`text-xs transition-colors ${
+                    billingPeriod === 'annual' ? 'text-slate-800 font-semibold' : 'text-slate-400 font-medium'
+                  }`}
+                >
                   Annually
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#fcf5f1] text-[#e8702a] border border-[#e8702a]/20">
-                  2 Months Free
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-orange-50 text-[#e8702a] border border-orange-200/60">
+                  2 MONTHS FREE
                 </span>
               </div>
             </div>
@@ -162,13 +180,12 @@ export default function NewHostingPage() {
           <div className="bg-white rounded-3xl border border-gray-200/90 shadow-sm overflow-hidden">
             {/* Header / Pricing Row */}
             <div className="grid grid-cols-1 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-gray-100">
-              {/* Col 0: Headline */}
-              <div className="p-8 flex flex-col justify-center items-center lg:items-start text-center lg:text-left bg-gradient-to-b from-gray-50/50 to-white">
-                <span className="text-3xl mb-3">🇬🇧</span>
-                <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight leading-tight">
-                  Fast, Secure &amp; Reliable Web Hosting
+              {/* Col 0: Dark Navy Topic Banner - Fits top, left, bottom flush with rounded-tl-3xl */}
+              <div className="bg-[#0e1726] text-white p-8 sm:p-9 flex flex-col justify-center text-left">
+                <h3 className="text-[28px] sm:text-[30px] font-black tracking-tight leading-[1.15] text-white">
+                  Fast, Secure &amp;<br />Reliable Web<br />Hosting
                 </h3>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs sm:text-[13px] text-slate-300/80 mt-8 leading-relaxed font-normal">
                   High-speed enterprise NVMe storage in London with automated cPanel infrastructure.
                 </p>
               </div>
@@ -176,7 +193,7 @@ export default function NewHostingPage() {
               {/* Col 1: Starter Salad */}
               <div
                 onClick={() => setSelectedPlanId('starter')}
-                className={`p-7 flex flex-col justify-between cursor-pointer transition-all ${
+                className={`p-7 sm:p-8 flex flex-col justify-between cursor-pointer transition-all ${
                   selectedPlanId === 'starter'
                     ? 'bg-[#fcf5f1]/40 ring-2 ring-inset ring-[#e8702a]'
                     : 'hover:bg-gray-50/60'
@@ -187,7 +204,7 @@ export default function NewHostingPage() {
                   <p className="text-xs text-gray-500 mt-1.5 min-h-[36px] leading-relaxed">
                     Light appetizer portion with 2-Core power, prepped for testing and staging.
                   </p>
-                  <div className="mt-5 pb-4 border-b border-gray-100">
+                  <div className="mt-5 pb-4">
                     <div className="flex items-baseline gap-1">
                       <span className="text-3xl font-black text-gray-900">
                         {billingPeriod === 'monthly' ? 'LKR 549' : 'LKR 458'}
@@ -225,14 +242,14 @@ export default function NewHostingPage() {
               {/* Col 2: Standard Salad (Most Popular) */}
               <div
                 onClick={() => setSelectedPlanId('standard')}
-                className={`p-7 relative flex flex-col justify-between cursor-pointer transition-all ${
+                className={`p-7 sm:p-8 pt-9 sm:pt-10 relative flex flex-col justify-between cursor-pointer transition-all ${
                   selectedPlanId === 'standard'
                     ? 'bg-[#fcf5f1]/60 ring-2 ring-inset ring-[#e8702a]'
                     : 'bg-gradient-to-b from-orange-50/20 to-white hover:bg-orange-50/40'
                 }`}
               >
-                <div className="absolute -top-0.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-b-xl bg-[#e8702a] text-white text-[9px] font-black uppercase tracking-wider shadow-sm">
-                  Most Popular
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#e8702a] text-white text-[9px] font-black uppercase tracking-wider shadow-sm">
+                  MOST POPULAR
                 </div>
 
                 <div>
@@ -240,7 +257,7 @@ export default function NewHostingPage() {
                   <p className="text-xs text-gray-500 mt-1.5 min-h-[36px] leading-relaxed">
                     Hearty main course with 2-Core power, prepped for live blogs and freelancers.
                   </p>
-                  <div className="mt-5 pb-4 border-b border-gray-100">
+                  <div className="mt-5 pb-4">
                     <div className="flex items-baseline gap-1">
                       <span className="text-3xl font-black text-[#e8702a]">
                         {billingPeriod === 'monthly' ? 'LKR 649' : 'LKR 541'}
@@ -274,7 +291,7 @@ export default function NewHostingPage() {
               {/* Col 3: Premium Salad */}
               <div
                 onClick={() => setSelectedPlanId('premium')}
-                className={`p-7 flex flex-col justify-between cursor-pointer transition-all ${
+                className={`p-7 sm:p-8 flex flex-col justify-between cursor-pointer transition-all rounded-tr-3xl ${
                   selectedPlanId === 'premium'
                     ? 'bg-[#fcf5f1]/40 ring-2 ring-inset ring-[#e8702a]'
                     : 'hover:bg-gray-50/60'
@@ -285,7 +302,7 @@ export default function NewHostingPage() {
                   <p className="text-xs text-gray-500 mt-1.5 min-h-[36px] leading-relaxed">
                     Generous banquet platter with 2-Core power, prepped for multi-site creators.
                   </p>
-                  <div className="mt-5 pb-4 border-b border-gray-100">
+                  <div className="mt-5 pb-4">
                     <div className="flex items-baseline gap-1">
                       <span className="text-3xl font-black text-gray-900">
                         {billingPeriod === 'monthly' ? 'LKR 829' : 'LKR 691'}
