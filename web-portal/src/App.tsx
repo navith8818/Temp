@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Menu, ChevronDown, Search, Zap, CreditCard, MessageCircle, 
-  Globe, Cpu, Cloud, Shield,
+  Globe, Cpu, Wallet, Shield,
   DollarSign,
   ArrowRight, CheckCircle2,
   Plus, Minus
@@ -662,20 +662,20 @@ export default function App() {
           </nav>
 
           {/* Mega Menus */}
-          {/* Products Mega Menu */}
+          {/* Services Mega Menu */}
           <div className={`absolute top-full left-0 right-0 pt-3 transition-all duration-300 origin-top transform ${hoveredMenu === 'products' ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'} z-10`}>
             <div className="bg-[#111111]/95 backdrop-blur-3xl border border-white/5 rounded-3xl shadow-2xl overflow-hidden flex">
               <div className="w-[280px] bg-gradient-to-br from-[#e8702a] to-[#a3440e] p-8 flex flex-col gap-2">
                 <span className="text-[11px] font-bold text-white/80 uppercase tracking-[0.1em] mb-4">Overview</span>
                 <button className="flex items-center gap-3 p-3 rounded-xl bg-white/20 border border-white/20 text-white text-[14px] font-semibold text-left transition-colors">
-                  <Globe size={20} className="opacity-80" /> Hosting Solutions(Active)
+                  <Globe size={20} className="opacity-80" /> Hosting Solutions
                   <ChevronDown size={14} className="ml-auto -rotate-90 opacity-80" />
                 </button>
                 <button className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white text-[14px] font-semibold text-left transition-colors">
                   <Cpu size={20} className="opacity-80" /> Infrastructure Management
                 </button>
                 <button className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white text-[14px] font-semibold text-left transition-colors">
-                  <Cloud size={20} className="opacity-80" /> Billing & Finance
+                  <Wallet size={20} className="opacity-80" /> Billing & Finance
                 </button>
                 <button className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white text-[14px] font-semibold text-left transition-colors">
                   <Shield size={20} className="opacity-80" /> Sequirity
@@ -683,7 +683,7 @@ export default function App() {
               </div>
 
               <div className="flex-1 p-8 pr-12 flex flex-col">
-                <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">Hosting Solutions (Active)</span>
+                <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">Hosting Solutions</span>
                 <div className="grid grid-cols-2 gap-x-12 gap-y-8">
                   <div className="flex flex-col cursor-pointer group">
                     <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Automated Web Hosting</span>
@@ -734,22 +734,22 @@ export default function App() {
             </div>
           </div>
 
-          {/* Solutions Mega Menu */}
+          {/* Suport Mega Menu */}
           <div className={`absolute top-full left-0 right-0 pt-3 transition-all duration-300 origin-top transform ${hoveredMenu === 'solutions' ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'} z-10`}>
             <div className="bg-[#111111]/95 backdrop-blur-3xl border border-white/5 rounded-3xl shadow-2xl overflow-hidden flex">
               <div className="w-[280px] bg-gradient-to-br from-[#e8702a] to-[#a3440e] p-8 flex flex-col gap-2">
                 <span className="text-[11px] font-bold text-white/80 uppercase tracking-[0.1em] mb-4">Overview</span>
                 <button className="flex items-center justify-between p-3 rounded-xl bg-white/20 border border-white/20 text-white text-[14px] font-semibold text-left transition-colors">
-                  Help & Contact (Active)
+                  Help & Contact
                   <ChevronDown size={14} className="-rotate-90 opacity-80" />
                 </button>
                 <button className="flex items-center justify-between p-3 rounded-xl hover:bg-white/10 text-white text-[14px] font-semibold text-left transition-colors">
-                  Self-Service Resources
+                  Self Service Resources
                 </button>
               </div>
 
               <div className="flex-1 p-8 pr-12 flex flex-col">
-                <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">Help & Contact (Active)</span>
+                <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">Help & Contact</span>
                 <div className="grid grid-cols-3 gap-x-8 gap-y-8">
                   <div className="flex flex-col cursor-pointer group">
                     <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Submit a Ticket</span>
