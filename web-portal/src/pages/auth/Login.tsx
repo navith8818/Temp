@@ -143,16 +143,7 @@ export const Login: React.FC = () => {
                 <label className="text-[11px] font-semibold text-white/60">
                   Password
                 </label>
-                <a
-                  href="#forgot"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    alert('Password reset instructions will be sent to your email.');
-                  }}
-                  className="text-[11px] text-[#e8702a] hover:text-[#ff8f4d] font-medium transition-colors"
-                >
-                  Forgot password?
-                </a>
+                
               </div>
               <div className="relative">
                 <input
@@ -202,16 +193,16 @@ export const Login: React.FC = () => {
             </button>
           </form>
 
-          {/* Operator Link to Admin Portal */}
-          <div className="mt-5 pt-4 border-t border-white/5 flex items-center justify-between text-xs">
-            <span className="text-white/40">Hosting Operations Staff?</span>
-            <Link
-              to="/admin"
-              className="text-[#e8702a] hover:text-[#ff8642] font-semibold transition-colors flex items-center gap-1"
-            >
-              Admin Portal &rarr;
-            </Link>
-          </div>
+          <a
+            href="#forgot"
+            onClick={(e) => {
+              e.preventDefault();
+              alert('Password reset instructions will be sent to your email.');
+            }}
+            className="text-[11px] text-[#e8702a] hover:text-[#ff8f4d] font-medium transition-colors"
+          >
+            Forgot password?
+          </a>
 
         </div>
 
