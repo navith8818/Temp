@@ -607,13 +607,13 @@ export default function App() {
                 className={`flex items-center gap-1 text-[13px] font-medium transition-colors ${hoveredMenu === 'products' ? 'text-white' : 'text-white/80 hover:text-white'}`}
                 onMouseEnter={() => setHoveredMenu('products')}
               >
-                Products <ChevronDown size={14} className="opacity-50" />
+                Services <ChevronDown size={14} className="opacity-50" />
               </button>
               <button 
                 className={`flex items-center gap-1 text-[13px] font-medium transition-colors ${hoveredMenu === 'solutions' ? 'text-white' : 'text-white/80 hover:text-white'}`}
                 onMouseEnter={() => setHoveredMenu('solutions')}
               >
-                Solutions <ChevronDown size={14} className="opacity-50" />
+                Suport <ChevronDown size={14} className="opacity-50" />
               </button>
               <button 
                 className="text-white/80 text-[13px] font-medium hover:text-white transition-colors"
@@ -668,65 +668,65 @@ export default function App() {
               <div className="w-[280px] bg-gradient-to-br from-[#e8702a] to-[#a3440e] p-8 flex flex-col gap-2">
                 <span className="text-[11px] font-bold text-white/80 uppercase tracking-[0.1em] mb-4">Overview</span>
                 <button className="flex items-center gap-3 p-3 rounded-xl bg-white/20 border border-white/20 text-white text-[14px] font-semibold text-left transition-colors">
-                  <Globe size={20} className="opacity-80" /> Edge Network
+                  <Globe size={20} className="opacity-80" /> Hosting Solutions(Active)
                   <ChevronDown size={14} className="ml-auto -rotate-90 opacity-80" />
                 </button>
                 <button className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white text-[14px] font-semibold text-left transition-colors">
-                  <Cpu size={20} className="opacity-80" /> AI
+                  <Cpu size={20} className="opacity-80" /> Infrastructure Management
                 </button>
                 <button className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white text-[14px] font-semibold text-left transition-colors">
-                  <Cloud size={20} className="opacity-80" /> Cloud
+                  <Cloud size={20} className="opacity-80" /> Billing & Finance
                 </button>
                 <button className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-white text-[14px] font-semibold text-left transition-colors">
-                  <Shield size={20} className="opacity-80" /> Security
+                  <Shield size={20} className="opacity-80" /> Sequirity
                 </button>
               </div>
 
               <div className="flex-1 p-8 pr-12 flex flex-col">
-                <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">Edge Network</span>
+                <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">Hosting Solutions (Active)</span>
                 <div className="grid grid-cols-2 gap-x-12 gap-y-8">
                   <div className="flex flex-col cursor-pointer group">
-                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">CDN</span>
-                    <span className="text-[12px] text-white/50 mt-1.5 leading-relaxed">Accelerate dynamic and static content delivery</span>
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Automated Web Hosting</span>
+                    <span className="text-[12px] text-white/50 mt-1.5 leading-relaxed">Instant account provisioning and activation via direct WHM API integration</span>
                   </div>
                   <div className="flex flex-col cursor-pointer group">
-                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">DNS</span>
-                    <span className="text-[12px] text-white/50 mt-1.5 leading-relaxed">Keep services reachable with fast & global DNS</span>
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Reseller Packages</span>
+                    <span className="text-[12px] text-white/50 mt-1.5 leading-relaxed">Seamlessly manage multiple hosting accounts with automated resource allocation</span>
                   </div>
                   <div className="flex flex-col cursor-pointer group">
-                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Streaming</span>
-                    <span className="text-[12px] text-white/50 mt-1.5 leading-relaxed">Stream on-demand and live videos at any scale</span>
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Service Lifecycle Management</span>
+                    <span className="text-[12px] text-white/50 mt-1.5 leading-relaxed">Automated upgrades, downgrades, and suspension handling directly synced with billing</span>
                   </div>
                   <div className="flex flex-col cursor-pointer group">
-                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Fast Edge</span>
-                    <span className="text-[12px] text-white/50 mt-1.5 leading-relaxed">Run serverless apps at the edge with ultra-low latency</span>
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Cloud VPS (Coming Soon)</span>
+                    <span className="text-[12px] text-white/50 mt-1.5 leading-relaxed">Scalable virtual private server provisioning powered by Virtualizor integration</span>
                   </div>
                   <div className="flex flex-col cursor-pointer group">
-                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Image Optimization</span>
-                    <span className="text-[12px] text-white/50 mt-1.5 leading-relaxed">Optimize and compress images automatically</span>
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Automated Cloud Backups</span>
+                    <span className="text-[12px] text-white/50 mt-1.5 leading-relaxed">Secure your data with daily automated snapshots and instant one-click restoration</span>
                   </div>
                 </div>
                 
                 <div className="mt-10 bg-gradient-to-r from-[#e8702a] to-[#d2611f] rounded-2xl p-5 flex items-center justify-between">
-                  <span className="text-[14px] text-white font-medium">Working on a larger project?</span>
+                  <span className="text-[14px] text-white font-medium">Need a custom dedicated server configuration?</span>
                   <button className="bg-white text-[#e8702a] text-[13px] font-bold px-5 py-2.5 rounded-full hover:bg-gray-50 transition-colors">
-                    Talk to Sales
+                    Open a Ticket
                   </button>
                 </div>
               </div>
 
               <div className="w-[300px] border-l border-white/5 p-8 flex flex-col">
-                <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">Spotlight</span>
+                <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">Microsoft Case Study</span>
                 <div className="flex-1 bg-[#1a1a1a] border border-white/10 rounded-2xl overflow-hidden flex flex-col group cursor-pointer">
                   <div className="h-[120px] bg-gradient-to-br from-blue-600 to-indigo-900 flex items-center justify-center p-6 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1633419461186-7d40a38105ec?q=80&w=600&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay opacity-60 transition-transform duration-700 group-hover:scale-105"></div>
-                    <span className="text-white font-bold text-2xl relative z-10 italic">Microsoft</span>
+                    <div className="absolute inset-0 bg-[url('https://voidnull.es/instalacion-de-hestiacp-en-ubuntu-24-04/')] bg-cover bg-center mix-blend-overlay opacity-10 transition-transform duration-700 group-hover:scale-105"></div>
+                    <span className="text-white font-bold text-2xl relative z-10 italic">HestiaCP</span>
                   </div>
                   <div className="p-5 flex flex-col flex-1">
-                    <span className="text-[14px] font-semibold text-white leading-snug">How Microsoft scaled global content delivery</span>
-                    <span className="text-[12px] text-white/50 mt-2 mb-6">Find out how Microsoft used Server Salad to strengthen delivery across regions.</span>
+                    <span className="text-[14px] font-semibold text-white leading-snug">Discover HestiaCP: The Open-Source Server Control Panel</span>
+                    <span className="text-[12px] text-white/50 mt-2 mb-6">Simplify Linux administration. Manage websites, emails, and databases from one open-source dashboard.</span>
                     <div className="mt-auto flex items-center gap-2 text-white/80 text-[12px] font-medium group-hover:text-white transition-colors">
-                      Read the case study <ArrowRight size={14} />
+                      Read the HestiaCP overview<ArrowRight size={14} />
                     </div>
                   </div>
                 </div>
@@ -740,61 +740,57 @@ export default function App() {
               <div className="w-[280px] bg-gradient-to-br from-[#e8702a] to-[#a3440e] p-8 flex flex-col gap-2">
                 <span className="text-[11px] font-bold text-white/80 uppercase tracking-[0.1em] mb-4">Overview</span>
                 <button className="flex items-center justify-between p-3 rounded-xl bg-white/20 border border-white/20 text-white text-[14px] font-semibold text-left transition-colors">
-                  By industry
+                  Help & Contact (Active)
                   <ChevronDown size={14} className="-rotate-90 opacity-80" />
                 </button>
                 <button className="flex items-center justify-between p-3 rounded-xl hover:bg-white/10 text-white text-[14px] font-semibold text-left transition-colors">
-                  By need
+                  Self-Service Resources
                 </button>
               </div>
 
               <div className="flex-1 p-8 pr-12 flex flex-col">
-                <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">By Industry</span>
+                <span className="text-[11px] font-bold text-white/40 uppercase tracking-[0.1em] mb-6">Help & Contact (Active)</span>
                 <div className="grid grid-cols-3 gap-x-8 gap-y-8">
                   <div className="flex flex-col cursor-pointer group">
-                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Gaming</span>
-                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Keep lag out of play</span>
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Submit a Ticket</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Open a prioritized request for technical assistance</span>
                   </div>
                   <div className="flex flex-col cursor-pointer group">
-                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Media & Streaming</span>
-                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Stream live and on demand</span>
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Live Chat</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Connect in real-time with our online support agents</span>
                   </div>
                   <div className="flex flex-col cursor-pointer group">
-                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Ecommerce & Retail</span>
-                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Keep carts moving at peak</span>
-                  </div>
-
-                  <div className="flex flex-col cursor-pointer group">
-                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">ERP Hosting</span>
-                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Keep critical systems running</span>
-                  </div>
-                  <div className="flex flex-col cursor-pointer group">
-                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Fintech</span>
-                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Keep payments & apps reachable</span>
-                  </div>
-                  <div className="flex flex-col cursor-pointer group">
-                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Hosting Providers</span>
-                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Protect every tenant you host</span>
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Billing Inquiries</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Resolve invoice, payment, or subscription questions</span>
                   </div>
 
                   <div className="flex flex-col cursor-pointer group">
-                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Ecommerce Agencies</span>
-                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Build ecommerce sites that scale</span>
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Service Status</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Check real-time network uptime and server maintenance</span>
                   </div>
                   <div className="flex flex-col cursor-pointer group">
-                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Online Education</span>
-                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Deliver seamless learning online</span>
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Migration Assistance</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Get help securely moving your existing sites to us</span>
+                  </div>
+
+                  <div className="flex flex-col cursor-pointer group">
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Report Abuse</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Report malicious activity or terms of service violations</span>
                   </div>
                   <div className="flex flex-col cursor-pointer group">
-                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">iGaming</span>
-                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Power every high-stakes moment</span>
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Account & Access Recovery</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Regain access to your customer portal or cPanel if you lose your credentials or 2FA device</span>
+                  </div>
+                  <div className="flex flex-col cursor-pointer group">
+                    <span className="text-[14px] font-semibold text-white group-hover:text-[#e8702a] transition-colors">Submit a Feature Request</span>
+                    <span className="text-[12px] text-white/50 mt-1 leading-relaxed">Share your ideas for new tools or integrations you want to see added to the Server Salad platform</span>
                   </div>
                 </div>
                 
                 <div className="mt-10 bg-[#e8702a] rounded-2xl p-5 flex items-center justify-between">
-                  <span className="text-[14px] text-white font-medium">Need something specific? Tell us your use case and we'll shape the right setup.</span>
+                  <span className="text-[14px] text-white font-medium">Can't find the answer you're looking for? Our technical engineers are ready to assist.</span>
                   <button className="bg-white text-[#e8702a] text-[13px] font-bold px-5 py-2.5 rounded-full hover:bg-gray-50 transition-colors">
-                    Talk to an expert
+                    Go to Support Desk
                   </button>
                 </div>
               </div>
