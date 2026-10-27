@@ -87,7 +87,7 @@ export const AdminTopBar: React.FC<AdminTopBarProps> = ({ onToggleDrawer }) => {
           {/* Infrastructure Health Status Pill */}
           <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-[11px] font-medium text-emerald-800">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>{onlineServersCount}/{servers.length} Nodes Online</span>
+            <span suppressHydrationWarning>{onlineServersCount}/{servers.length} Nodes Online</span>
           </div>
 
           {/* Role Switcher (Demonstrating Scenario G) */}

@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full bg-[#f8f9fa] text-[#111827]">
+      <body className="min-h-full bg-[#f8f9fa] text-[#111827]" suppressHydrationWarning>
         <AdminDataProvider>
           <AdminLayout>{children}</AdminLayout>
         </AdminDataProvider>

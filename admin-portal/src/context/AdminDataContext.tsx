@@ -51,6 +51,9 @@ export interface ToastMessage {
 }
 
 interface AdminDataContextType {
+  // Hydration status
+  isHydrated: boolean;
+
   // Current user & role simulation
   currentRole: StaffRole;
   setCurrentRole: (role: StaffRole) => void;
@@ -197,49 +200,88 @@ function setStored<T>(key: string, value: T) {
 export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentRole, setCurrentRoleState] = useState<StaffRole>('ADMINISTRATOR');
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  // Entities
-  const [servers, setServers] = useState<HostingServer[]>(() => getStored(`${STORAGE_KEY}_servers`, INITIAL_SERVERS));
-  const [serverGroups, setServerGroups] = useState<ServerGroup[]>(() => getStored(`${STORAGE_KEY}_serverGroups`, INITIAL_SERVER_GROUPS));
-  const [products, setProducts] = useState<HostingProduct[]>(() => getStored(`${STORAGE_KEY}_products`, INITIAL_PRODUCTS));
-  const [customers, setCustomers] = useState<Customer[]>(() => getStored(`${STORAGE_KEY}_customers`, INITIAL_CUSTOMERS));
-  const [orders, setOrders] = useState<Order[]>(() => getStored(`${STORAGE_KEY}_orders`, INITIAL_ORDERS));
-  const [services, setServices] = useState<HostingService[]>(() => getStored(`${STORAGE_KEY}_services`, INITIAL_SERVICES));
-  const [provisioningJobs, setProvisioningJobs] = useState<ProvisioningJob[]>(() => getStored(`${STORAGE_KEY}_provisioningJobs`, INITIAL_PROVISIONING_JOBS));
-  const [invoices, setInvoices] = useState<Invoice[]>(() => getStored(`${STORAGE_KEY}_invoices`, INITIAL_INVOICES));
-  const [payments, setPayments] = useState<PaymentTransaction[]>(() => getStored(`${STORAGE_KEY}_payments`, INITIAL_PAYMENTS));
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>(() => getStored(`${STORAGE_KEY}_subscriptions`, INITIAL_SUBSCRIPTIONS));
-  const [tickets, setTickets] = useState<SupportTicket[]>(() => getStored(`${STORAGE_KEY}_tickets`, INITIAL_TICKETS));
-  const [liveChats, setLiveChats] = useState<LiveChatSession[]>(() => getStored(`${STORAGE_KEY}_liveChats`, INITIAL_LIVE_CHATS));
-  const [notifications, setNotifications] = useState<NotificationLog[]>(() => getStored(`${STORAGE_KEY}_notifications`, INITIAL_NOTIFICATIONS));
-  const [emailTemplates, setEmailTemplates] = useState<EmailTemplate[]>(() => getStored(`${STORAGE_KEY}_emailTemplates`, INITIAL_EMAIL_TEMPLATES));
-  const [staff, setStaff] = useState<StaffMember[]>(() => getStored(`${STORAGE_KEY}_staff`, INITIAL_STAFF));
-  const [auditLogs, setAuditLogs] = useState<AuditLog[]>(() => getStored(`${STORAGE_KEY}_auditLogs`, INITIAL_AUDIT_LOGS));
-  const [domains, setDomains] = useState<CustomerDomain[]>(() => getStored(`${STORAGE_KEY}_domains`, INITIAL_DOMAINS));
-  const [settings, setSettings] = useState<IntegrationSettings>(() => getStored(`${STORAGE_KEY}_settings`, INITIAL_SETTINGS));
+  // Entities initialized with SSR-safe initial constants
+  const [servers, setServers] = useState<HostingServer[]>(INITIAL_SERVERS);
+  const [serverGroups, setServerGroups] = useState<ServerGroup[]>(INITIAL_SERVER_GROUPS);
+  const [products, setProducts] = useState<HostingProduct[]>(INITIAL_PRODUCTS);
+  const [customers, setCustomers] = useState<Customer[]>(INITIAL_CUSTOMERS);
+  const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
+  const [services, setServices] = useState<HostingService[]>(INITIAL_SERVICES);
+  const [provisioningJobs, setProvisioningJobs] = useState<ProvisioningJob[]>(INITIAL_PROVISIONING_JOBS);
+  const [invoices, setInvoices] = useState<Invoice[]>(INITIAL_INVOICES);
+  const [payments, setPayments] = useState<PaymentTransaction[]>(INITIAL_PAYMENTS);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>(INITIAL_SUBSCRIPTIONS);
+  const [tickets, setTickets] = useState<SupportTicket[]>(INITIAL_TICKETS);
+  const [liveChats, setLiveChats] = useState<LiveChatSession[]>(INITIAL_LIVE_CHATS);
+  const [notifications, setNotifications] = useState<NotificationLog[]>(INITIAL_NOTIFICATIONS);
+  const [emailTemplates, setEmailTemplates] = useState<EmailTemplate[]>(INITIAL_EMAIL_TEMPLATES);
+  const [staff, setStaff] = useState<StaffMember[]>(INITIAL_STAFF);
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>(INITIAL_AUDIT_LOGS);
+  const [domains, setDomains] = useState<CustomerDomain[]>(INITIAL_DOMAINS);
+  const [settings, setSettings] = useState<IntegrationSettings>(INITIAL_SETTINGS);
+
+  // Load persisted demo data from localStorage ONLY on client mount after initial hydration
+  useEffect(() => {
+    try {
+      const load = <T,>(key: string, setter: React.Dispatch<React.SetStateAction<T>>) => {
+        const item = localStorage.getItem(key);
+        if (item) {
+          try {
+            setter(JSON.parse(item));
+          } catch {}
+        }
+      };
+      load(`${STORAGE_KEY}_role`, setCurrentRoleState);
+      load(`${STORAGE_KEY}_servers`, setServers);
+      load(`${STORAGE_KEY}_serverGroups`, setServerGroups);
+      load(`${STORAGE_KEY}_products`, setProducts);
+      load(`${STORAGE_KEY}_customers`, setCustomers);
+      load(`${STORAGE_KEY}_orders`, setOrders);
+      load(`${STORAGE_KEY}_services`, setServices);
+      load(`${STORAGE_KEY}_provisioningJobs`, setProvisioningJobs);
+      load(`${STORAGE_KEY}_invoices`, setInvoices);
+      load(`${STORAGE_KEY}_payments`, setPayments);
+      load(`${STORAGE_KEY}_subscriptions`, setSubscriptions);
+      load(`${STORAGE_KEY}_tickets`, setTickets);
+      load(`${STORAGE_KEY}_liveChats`, setLiveChats);
+      load(`${STORAGE_KEY}_notifications`, setNotifications);
+      load(`${STORAGE_KEY}_emailTemplates`, setEmailTemplates);
+      load(`${STORAGE_KEY}_staff`, setStaff);
+      load(`${STORAGE_KEY}_auditLogs`, setAuditLogs);
+      load(`${STORAGE_KEY}_domains`, setDomains);
+      load(`${STORAGE_KEY}_settings`, setSettings);
+    } catch (e) {
+      console.warn('Failed to hydrate state from localStorage', e);
+    } finally {
+      setIsHydrated(true);
+    }
+  }, []);
 
   // Current staff member representation based on role
   const currentStaff: StaffMember = staff.find(s => s.role === currentRole) || staff[0];
 
-  // Persist state changes
-  useEffect(() => { setStored(`${STORAGE_KEY}_servers`, servers); }, [servers]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_serverGroups`, serverGroups); }, [serverGroups]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_products`, products); }, [products]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_customers`, customers); }, [customers]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_orders`, orders); }, [orders]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_services`, services); }, [services]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_provisioningJobs`, provisioningJobs); }, [provisioningJobs]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_invoices`, invoices); }, [invoices]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_payments`, payments); }, [payments]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_subscriptions`, subscriptions); }, [subscriptions]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_tickets`, tickets); }, [tickets]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_liveChats`, liveChats); }, [liveChats]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_notifications`, notifications); }, [notifications]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_emailTemplates`, emailTemplates); }, [emailTemplates]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_staff`, staff); }, [staff]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_auditLogs`, auditLogs); }, [auditLogs]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_domains`, domains); }, [domains]);
-  useEffect(() => { setStored(`${STORAGE_KEY}_settings`, settings); }, [settings]);
+  // Persist state changes only AFTER client hydration has safely loaded existing data
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_role`, currentRole); }, [isHydrated, currentRole]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_servers`, servers); }, [isHydrated, servers]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_serverGroups`, serverGroups); }, [isHydrated, serverGroups]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_products`, products); }, [isHydrated, products]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_customers`, customers); }, [isHydrated, customers]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_orders`, orders); }, [isHydrated, orders]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_services`, services); }, [isHydrated, services]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_provisioningJobs`, provisioningJobs); }, [isHydrated, provisioningJobs]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_invoices`, invoices); }, [isHydrated, invoices]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_payments`, payments); }, [isHydrated, payments]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_subscriptions`, subscriptions); }, [isHydrated, subscriptions]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_tickets`, tickets); }, [isHydrated, tickets]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_liveChats`, liveChats); }, [isHydrated, liveChats]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_notifications`, notifications); }, [isHydrated, notifications]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_emailTemplates`, emailTemplates); }, [isHydrated, emailTemplates]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_staff`, staff); }, [isHydrated, staff]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_auditLogs`, auditLogs); }, [isHydrated, auditLogs]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_domains`, domains); }, [isHydrated, domains]);
+  useEffect(() => { if (isHydrated) setStored(`${STORAGE_KEY}_settings`, settings); }, [isHydrated, settings]);
 
   // Toast Helpers
   const addToast = (type: 'success' | 'error' | 'info' | 'warning', title: string, message?: string) => {
@@ -1145,6 +1187,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   return (
     <AdminDataContext.Provider
       value={{
+        isHydrated,
         currentRole,
         setCurrentRole,
         currentStaff,
