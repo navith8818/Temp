@@ -1,17 +1,15 @@
-# Server Salad Cloud Services — Complete System API Contract
+# Server Salad Cloud Services — Complete System API Contract (PCI-DSS & PayHere Hosted)
 
-**Version:** `1.0.0`  
+**Version:** `2.0.0`  
 **Base URL:** `https://api.serversalad.com/api/v1`  
-**Environments:**  
-- Production: `https://api.serversalad.com/api/v1`
-- Staging: `https://staging-api.serversalad.com/api/v1`
-- Local Development: `http://localhost:4000/api/v1`
+**Database & ORM:** PostgreSQL with Prisma ([`prisma/schema.prisma`](file:///c:/Users/navithranviru/Desktop/New%20folder/prisma/schema.prisma))  
+**Payment Security Standard:** PCI-DSS Level 1 Hosted Fields & Tokens via PayHere SDK. **Zero raw card numbers, expiry dates, or CVVs** are ever processed by or stored in the React frontend or NestJS backend.
 
 ---
 
 ## 1. Global Architectural & Security Standards
 
-### 1.1 Authentication & Authorization
+### 1.1 Authentication & Realm Isolation
 The platform operates a dual-token JWT security model with separate role scopes:
 - **Customer Realm (`CUSTOMER`):** Authenticates via customer credentials. Has tenant-level isolation (can only access resources where `customerId == req.user.id`).
 - **Staff / Admin Realm (`STAFF`):** Authenticates administrative operators. Enforces granular Role-Based Access Control (`StaffRole`):
@@ -20,19 +18,51 @@ The platform operates a dual-token JWT security model with separate role scopes:
   - `SUPPORT_AGENT`: Tickets, live chat, customer inspection. Billing, infrastructure, and settings hidden/forbidden (`403 Forbidden`).
   - `BILLING_STAFF`: Invoices, transactions, subscriptions, refunds, customer billing profile. Server hypervisor nodes and system configs hidden/forbidden (`403 Forbidden`).
 
-#### Headers
+#### Standard Headers
 ```http
 Authorization: Bearer <jwt_access_token>
 Content-Type: application/json
 Accept: application/json
-X-Client-Version: 1.0.0
+X-Client-Version: 2.0.0
 X-Request-ID: <uuid_v4>
-Idempotency-Key: <uuid_v4>   # Mandatory for /checkout, /payments/:id/refund, and /provisioning/retry
+Idempotency-Key: <uuid_v4>   # Mandatory for /checkout/order, /payments/:id/refund, and /provisioning/retry
 ```
 
 ---
 
-### 1.2 Standard Response Envelopes
+### 1.2 PCI-DSS Payment Architecture: PayHere Hosted SDK
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Customer as Customer (Browser)
+    participant Web as Web / Customer Portal (React)
+    participant Nest as NestJS Backend (API)
+    participant DB as PostgreSQL (Prisma)
+    participant PH as PayHere Gateway (PCI Vault)
+
+    Customer->>Web: Clicks "Pay Now & Activate" or "Add Payment Card"
+    Web->>Nest: POST /checkout/payhere/initiate (or /preapprove)
+    Nest->>DB: Create Order & Invoice (Status: PENDING)
+    Nest->>Nest: Compute HMAC-MD5 Hash(merchant_id + order_id + amount + secret)
+    Nest-->>Web: Return PayHere Params & Security Hash
+    Web->>PH: payhere.startPayment(params) [Hosted Modal / SDK]
+    Customer->>PH: Enters Card & CVV directly in PayHere Hosted IFrame
+    PH-->>Web: SDK onCompleted(orderId)
+    PH->>Nest: Server-to-Server Webhook IPN (POST /webhooks/payhere)
+    Nest->>Nest: Verify MD5 Signature & Status Code
+    Nest->>DB: Update Invoice to PAID, Save customer_token & Masked Card
+    Nest->>Nest: Trigger Provisioning Job Queue
+    Web->>Nest: GET /orders/:id/tracking (Monitor Provisioning)
+```
+
+1. **Checkout Flow (Storefront):** The frontend calls `POST /api/v1/checkout/payhere/initiate`. The NestJS backend calculates the cryptographic HMAC-MD5 hash and returns the parameter set. The React client calls `payhere.startPayment(paymentDetails)`.
+2. **Recurring Subscriptions & Saved Cards:** Tokenized using PayHere **Preapproval API**. PayHere returns a secure `customer_token` via server webhook.
+3. **Automated Monthly Renewals:** The NestJS backend executes recurring charges server-to-server via the PayHere Charging API using the saved `customer_token`. Zero card data is handled by our app.
+
+---
+
+### 1.3 Standard Response Envelopes
 
 #### Success Envelope (`200 OK`, `201 Created`)
 ```json
@@ -51,7 +81,6 @@ Idempotency-Key: <uuid_v4>   # Mandatory for /checkout, /payments/:id/refund, an
 ```
 
 #### Error Envelope (`400`, `401`, `403`, `404`, `409`, `422`, `500`)
-Compliant with RFC 7807 problem details:
 ```json
 {
   "success": false,
@@ -74,24 +103,18 @@ Compliant with RFC 7807 problem details:
 ## 2. Shared & Authentication Endpoints
 
 ### 2.1 Customer Authentication (`/auth`)
+*Source files: `web-portal/src/pages/auth/Register.tsx`, `web-portal/src/pages/auth/Login.tsx`*
 
 #### `POST /auth/register`
 Creates a new customer account from the storefront registration form.
+> **Verified Form Fields (`Register.tsx`):** Only `fullName`, `email`, and `password` are collected on the registration screen (plus client-side `confirmPassword` and `agreeTerms`). No company, phone, or address fields exist on this form.
 - **Access:** Public
 - **Request Body:**
 ```json
 {
-  "fullName": "Daniel Vance",
-  "email": "daniel@vancegrowth.com",
-  "password": "SecurePassword123!",
-  "company": "Vance Growth Ltd",
-  "phone": "+44 7700 900077",
-  "billingAddress": {
-    "line1": "100 Bishopsgate",
-    "city": "London",
-    "country": "United Kingdom",
-    "postalCode": "EC2N 4AG"
-  }
+  "fullName": "Alex Jayawardena",
+  "email": "alex@domain.com",
+  "password": "SecurePassword123!"
 }
 ```
 - **Response (`201 Created`):**
@@ -101,9 +124,9 @@ Creates a new customer account from the storefront registration form.
   "statusCode": 201,
   "data": {
     "user": {
-      "id": "usr_c91a0b3",
-      "fullName": "Daniel Vance",
-      "email": "daniel@vancegrowth.com",
+      "id": "usr_alex_01",
+      "fullName": "Alex Jayawardena",
+      "email": "alex@domain.com",
       "role": "CUSTOMER"
     },
     "tokens": {
@@ -115,52 +138,33 @@ Creates a new customer account from the storefront registration form.
 }
 ```
 
+#### `POST /auth/google`
+Authenticates or registers a customer via Google OAuth Single Sign-On (from the "Continue with Google" button on `Register.tsx` and `Login.tsx`).
+- **Access:** Public
+- **Request Body:** `{ "idToken": "eyJhbGciOiJSUzI1NiIs..." }`
+- **Response (`200 OK` or `201 Created`):** Returns customer profile and JWT auth tokens.
+
 #### `POST /auth/login`
-Authenticates existing customers.
+Authenticates existing customers using credentials.
 - **Access:** Public
 - **Request Body:**
 ```json
 {
-  "email": "sarah.jenkins@serversalad.cloud",
-  "password": "CustomerSecretPassword123!"
+  "email": "alex@domain.com",
+  "password": "SecurePassword123!",
+  "rememberMe": true
 }
 ```
-- **Response (`200 OK`):**
-```json
-{
-  "success": true,
-  "statusCode": 200,
-  "data": {
-    "user": {
-      "id": "usr_salad_84",
-      "fullName": "Sarah Jenkins",
-      "email": "sarah.jenkins@serversalad.cloud",
-      "company": "Fresh Kitchen Media S.A.",
-      "role": "CUSTOMER"
-    },
-    "tokens": {
-      "accessToken": "eyJhbGciOi...",
-      "refreshToken": "eyJhbGciOi...",
-      "expiresIn": 3600
-    }
-  }
-}
-```
+- **Response (`200 OK`):** Returns customer user and tokens.
 
 #### `POST /auth/refresh`
 Rotates access token using stored refresh token.
-- **Access:** Public (with valid refresh token)
-- **Request Body:**
-```json
-{
-  "refreshToken": "eyJhbGciOi..."
-}
-```
-- **Response (`200 OK`):** Returns new `accessToken` and `refreshToken`.
+- **Request Body:** `{ "refreshToken": "eyJhbGciOi..." }`
+- **Response (`200 OK`):** Returns refreshed tokens.
 
 #### `POST /auth/forgot-password`
 Triggers password reset email with temporary cryptographic token via Resend.
-- **Request Body:** `{ "email": "daniel@vancegrowth.com" }`
+- **Request Body:** `{ "email": "alex@domain.com" }`
 - **Response (`200 OK`):** `{ "success": true, "message": "Password reset instructions sent." }`
 
 ---
@@ -169,7 +173,6 @@ Triggers password reset email with temporary cryptographic token via Resend.
 
 #### `POST /admin/auth/login`
 Authenticates staff members and administrators.
-- **Access:** Public
 - **Request Body:**
 ```json
 {
@@ -177,64 +180,36 @@ Authenticates staff members and administrators.
   "password": "MasterAdminSecretPassword123!"
 }
 ```
-- **Response (`200 OK`):**
-```json
-{
-  "success": true,
-  "statusCode": 200,
-  "data": {
-    "staff": {
-      "id": "staff_01",
-      "name": "Sarah Jenkins",
-      "email": "admin@serversalad.net",
-      "role": "ADMINISTRATOR",
-      "department": "Infrastructure & Operations"
-    },
-    "tokens": {
-      "accessToken": "eyJhbGciOi...",
-      "refreshToken": "eyJhbGciOi...",
-      "expiresIn": 28800
-    }
-  }
-}
-```
+- **Response (`200 OK`):** Returns staff entity (`role: 'ADMINISTRATOR' | 'STAFF' | 'SUPPORT_AGENT' | 'BILLING_STAFF'`) and tokens.
 
 #### `GET /admin/auth/me`
 Retrieves authenticated staff profile, active role, and system permissions.
-- **Access:** Staff Bearer Token
 
 ---
 
-## 3. Web Portal (Public Storefront & Onboarding)
+## 3. Web Portal (Storefront & Order Flow)
 
-### 3.1 Public Product Catalog & Pricing
+### 3.1 Storefront Catalog & Add-Ons
 
 #### `GET /catalog/products`
 Retrieves all publicly available hosting packages.
-- **Access:** Public
-- **Query Params:**
-  - `type`: `SHARED` | `VPS` (optional filter)
+*Source: `web-portal/src/App.tsx#PricingSection` & `web-portal/src/context/OrderContext.tsx#DEFAULT_PLANS`*
 - **Response (`200 OK`):**
 ```json
 {
   "success": true,
-  "statusCode": 200,
   "data": [
     {
-      "id": "prod_web_essential",
-      "slug": "web-hosting-essential",
+      "id": "web",
       "name": "Web Hosting",
       "tagline": "Essential",
       "type": "SHARED",
       "priceMonthlyLkr": 458,
-      "priceAnnualLkr": 4580,
       "priceRenewalUsd": 2.99,
       "cpu": "2x CPU Performance",
       "storage": "50 GB SSD Cloud storage",
-      "storageGb": 50,
       "domainsAllowed": 5,
       "trial": true,
-      "trialDays": 30,
       "features": [
         "Fully optimised for WordPress",
         "2x CPU Performance",
@@ -246,20 +221,16 @@ Retrieves all publicly available hosting packages.
       ]
     },
     {
-      "id": "prod_vps_pro",
-      "slug": "vps-hosting-pro",
+      "id": "vps",
       "name": "VPS Hosting",
       "tagline": "Pro Dedicated",
       "type": "VPS",
       "priceMonthlyLkr": 2450,
-      "priceAnnualLkr": 24500,
       "priceRenewalUsd": 12.50,
       "cpu": "4x Dedicated vCPU",
       "storage": "100 GB NVMe Storage",
-      "storageGb": 100,
       "domainsAllowed": 10,
       "trial": false,
-      "trialDays": 0,
       "features": [
         "Dedicated IP Address",
         "4x Dedicated vCPU",
@@ -275,7 +246,7 @@ Retrieves all publicly available hosting packages.
 ```
 
 #### `GET /catalog/addons/email-plans`
-Retrieves available email add-ons (e.g. Spacemail Pro).
+Retrieves Spacemail email add-on plan.
 - **Response (`200 OK`):**
 ```json
 {
@@ -288,7 +259,8 @@ Retrieves available email add-ons (e.g. Spacemail Pro).
       "storageGb": 5,
       "aliasesCount": 10,
       "trialDays": 30,
-      "renewalPriceYearlyUsd": 11.76
+      "renewalPriceYearlyUsd": 11.76,
+      "priceLkr": 0
     }
   ]
 }
@@ -296,38 +268,25 @@ Retrieves available email add-ons (e.g. Spacemail Pro).
 
 #### `POST /catalog/domains/check`
 Validates domain syntax, resolves WHOIS/DNS availability, or verifies pointer status.
-- **Request Body:**
-```json
-{
-  "domain": "nodegen.com",
-  "type": "external" // "registered" | "external" | "existing"
-}
-```
+- **Request Body:** `{ "domain": "nodegen.com", "type": "external" }`
 - **Response (`200 OK`):**
 ```json
 {
   "success": true,
   "data": {
     "domain": "nodegen.com",
+    "type": "external",
+    "priceLkr": 0, // Registered domains are LKR 3,850/yr; external is 0
     "status": "valid",
-    "available": false,
     "isPointerConfigured": true,
-    "suggestedNameservers": ["ns1.serversalad.com", "ns2.serversalad.com"],
-    "priceLkr": 0
+    "suggestedNameservers": ["ns1.serversalad.com", "ns2.serversalad.com"]
   }
 }
 ```
 
 #### `POST /checkout/promo/validate`
-Validates a promotional coupon code.
-- **Request Body:**
-```json
-{
-  "code": "SALAD50",
-  "productId": "prod_web_essential",
-  "billingCycle": "MONTHLY"
-}
-```
+Validates coupon codes (`SALAD50`, `LAUNCH2026`, `COMMUNITY`).
+- **Request Body:** `{ "code": "SALAD50", "planId": "web" }`
 - **Response (`200 OK`):**
 ```json
 {
@@ -336,7 +295,6 @@ Validates a promotional coupon code.
     "valid": true,
     "code": "SALAD50",
     "discountPercentage": 50,
-    "discountAmountLkr": 229,
     "message": "50% promotional discount applied successfully."
   }
 }
@@ -344,21 +302,20 @@ Validates a promotional coupon code.
 
 ---
 
-### 3.2 Checkout & Provisioning Submission
+### 3.2 PayHere Hosted Checkout & Provisioning
 
 #### `POST /checkout/order`
-Submits an end-to-end checkout payload, creates the Customer record (if guest), creates Order and Invoice records, processes initial billing, and kicks off provisioning.
-- **Header:** `Idempotency-Key: <unique_client_generated_uuid>`
+Creates the Order and unpaid Invoice in PostgreSQL via Prisma.
+- **Header:** `Idempotency-Key: <uuid_v4>`
 - **Request Body:**
 ```json
 {
-  "productId": "prod_web_essential",
-  "billingCycle": "MONTHLY",
+  "planId": "web",
   "setupMode": "new", // "new" | "migrate"
   "migrationDetails": {
-    "sourceUrl": "https://cpanel.myoldhost.com:2083",
-    "cpanelUser": "olduser",
-    "notes": "Please migrate WordPress site + MySQL db"
+    "sourceUrl": "https://oldcpanel.com",
+    "cpanelUser": "user123",
+    "notes": "Please migrate WordPress site"
   },
   "domains": [
     {
@@ -367,24 +324,19 @@ Submits an end-to-end checkout payload, creates the Customer record (if guest), 
       "priceLkr": 0
     }
   ],
-  "selectedEmailPlanId": "spacemail-pro",
+  "selectedEmailPlan": {
+    "id": "spacemail-pro",
+    "assignedDomain": "nodegen.com"
+  },
   "includeAutoBackup": true,
   "promoCode": "SALAD50",
-  "customer": {
+  "invoiceDetails": {
     "fullName": "Alex Jayawardena",
     "email": "alex@nodegen.com",
+    "country": "Sri Lanka",
     "address": "42 Galle Road",
     "city": "Colombo 03",
-    "country": "Sri Lanka",
     "vatNumber": ""
-  },
-  "payment": {
-    "method": "card", // "card" | "payhere" | "stripe"
-    "cardNumber": "4532892012048821",
-    "cardHolder": "Alex Jayawardena",
-    "cardExpiry": "08/28",
-    "cardCvc": "892",
-    "saveCard": true
   }
 }
 ```
@@ -392,24 +344,49 @@ Submits an end-to-end checkout payload, creates the Customer record (if guest), 
 ```json
 {
   "success": true,
-  "statusCode": 201,
   "data": {
     "orderId": "ord_9204",
     "orderNumber": "ORD-9204",
     "invoiceId": "inv_88129",
     "invoiceNumber": "INV-2026-092",
-    "customerId": "usr_alex_01",
-    "provisioningJobId": "job_88419",
-    "status": "PROCESSING",
-    "initialAmountChargedLkr": 0,
+    "totalLkr": 0, // 0 for trial orders
+    "isTrial": true,
+    "requiresPaymentGateway": false // true if non-zero amount
+  }
+}
+```
+
+#### `POST /checkout/payhere/initiate`
+Generates PayHere Hosted SDK parameters and HMAC-MD5 security hash for non-zero checkouts.
+- **Request Body:** `{ "orderId": "ord_9204" }`
+- **Response (`200 OK`):**
+```json
+{
+  "success": true,
+  "data": {
+    "sandbox": true,
+    "merchant_id": "1224890",
+    "return_url": "https://serversalad.com/order/processing?orderId=ord_9204",
+    "cancel_url": "https://serversalad.com/order/checkout",
+    "notify_url": "https://api.serversalad.com/api/v1/webhooks/payhere",
+    "order_id": "ORD-9204",
+    "items": "Web Hosting Essential - nodegen.com",
+    "amount": "458.00",
     "currency": "LKR",
-    "redirectUrl": "/order/processing?jobId=job_88419"
+    "hash": "D98A7B6C4F3E2D1A0B9C8E7F6A5B4C3D",
+    "first_name": "Alex",
+    "last_name": "Jayawardena",
+    "email": "alex@nodegen.com",
+    "phone": "+94771234567",
+    "address": "42 Galle Road",
+    "city": "Colombo 03",
+    "country": "Sri Lanka"
   }
 }
 ```
 
 #### `GET /orders/:id/tracking`
-Polls or monitors order setup timeline progress.
+Polls the 6 provisioning steps shown on `web-portal/src/pages/order/Provisioning.tsx`.
 - **Response (`200 OK`):**
 ```json
 {
@@ -418,19 +395,17 @@ Polls or monitors order setup timeline progress.
     "orderId": "ord_9204",
     "status": "PROCESSING",
     "currentStep": 4,
-    "totalSteps": 6,
     "steps": [
-      { "id": 1, "label": "Order confirmed & invoice generated", "completed": true },
-      { "id": 2, "label": "Payment authorization verified", "completed": true },
-      { "id": 3, "label": "Provisioning NVMe cloud storage container", "completed": true },
-      { "id": 4, "label": "Configuring cPanel & WHM control environment", "completed": false, "inProgress": true },
-      { "id": 5, "label": "Issuing Let's Encrypt wildcard SSL certificate", "completed": false },
-      { "id": 6, "label": "Hosting service activated & live", "completed": false }
+      { "id": 1, "label": "Order confirmed & invoice generated", "status": "COMPLETED" },
+      { "id": 2, "label": "Payment authorization verified", "status": "COMPLETED" },
+      { "id": 3, "label": "Provisioning NVMe cloud storage container", "status": "COMPLETED" },
+      { "id": 4, "label": "Configuring cPanel & WHM control environment", "status": "RUNNING" },
+      { "id": 5, "label": "Issuing Let's Encrypt wildcard SSL certificate", "status": "PENDING" },
+      { "id": 6, "label": "Hosting service activated & live", "status": "PENDING" }
     ],
     "service": {
       "id": "srv_41029",
       "primaryDomain": "nodegen.com",
-      "serverIp": "198.51.100.42",
       "status": "PROVISIONING"
     }
   }
@@ -442,33 +417,31 @@ Polls or monitors order setup timeline progress.
 ## 4. Customer Portal (Self-Service Dashboard)
 
 ### 4.1 Hosting Service Management
+*Source: `customer-portal/src/types/hosting.ts`, `customer-portal/src/data/mockHostingData.ts`*
 
 #### `GET /customer/hosting/plans`
-Lists all active hosting services owned by the authenticated customer.
-- **Access:** Customer Bearer Token
-- **Response (`200 OK`):** Array of `HostingPlan` entities.
+Lists all hosting plans owned by the authenticated customer.
 
 #### `GET /customer/hosting/plans/:id`
 Retrieves detailed real-time hosting plan status, quotas, and server metrics.
-- **Access:** Customer Bearer Token
 - **Response (`200 OK`):**
 ```json
 {
   "success": true,
-  "statusCode": 200,
   "data": {
     "id": "plan_785df5d6",
     "name": "Web Hosting Essential",
     "tier": "Essential SSD NVMe",
-    "status": "active",
+    "status": "active", // "active" | "needs_dns" | "provisioning" | "suspended"
     "primaryDomain": "freshkitchen.io",
     "serverHost": "cp1.serversalad.com",
     "serverIp": "198.51.100.42",
     "controlPanelPort": 8083,
     "hestiaUsername": "usr_salad_84",
-    "productId": "prod_web_essential",
-    "startedAt": "2026-01-13T00:00:00Z",
-    "renewalDate": "2026-11-15T00:00:00Z",
+    "productId": "785df5d6-7b0b-43c2-8d55-9cc92e677dad",
+    "startedAt": "Jan 13, 2026",
+    "updatedAt": "Oct 13, 2026",
+    "renewalDate": "Nov 15, 2026",
     "renewalPrice": 9.99,
     "billingCycle": "monthly",
     "autoRenew": true,
@@ -493,7 +466,7 @@ Retrieves detailed real-time hosting plan status, quotas, and server metrics.
     "sslActive": true,
     "dnsNameservers": ["ns1.serversalad.com", "ns2.serversalad.com"],
     "backupSummary": {
-      "lastBackup": "2026-10-27T03:00:00Z",
+      "lastBackup": "Today at 03:00 UTC",
       "retentionDays": 14,
       "frequency": "Daily Automated",
       "snapshotSizeGb": 2.1,
@@ -506,69 +479,31 @@ Retrieves detailed real-time hosting plan status, quotas, and server metrics.
 ```
 
 #### `POST /customer/hosting/plans/:id/sso-session`
-Generates a secure, single-use, time-limited token to directly access external HestiaCP or cPanel without displaying plaintext passwords.
-- **Access:** Customer Bearer Token
-- **Response (`200 OK`):**
-```json
-{
-  "success": true,
-  "data": {
-    "redirectUrl": "https://cp1.serversalad.com:8083/login/?token=sso_99a8b1c7d34e20984",
-    "expiresAt": "2026-10-27T15:35:00Z"
-  }
-}
-```
+Generates a one-time SSO redirect URL into HestiaCP/cPanel without exposing credentials.
+- **Response (`200 OK`):** `{ "redirectUrl": "https://cp1.serversalad.com:8083/login/?token=sso_token_991823" }`
 
 #### `PATCH /customer/hosting/plans/:id/auto-renew`
 Toggles subscription auto-renewal.
 - **Request Body:** `{ "autoRenew": true }`
-- **Response (`200 OK`):** `{ "success": true, "autoRenew": true }`
 
 #### `PATCH /customer/hosting/plans/:id/php-version`
-Updates default server PHP version for this hosting container.
+Switches server PHP version (`8.1`, `8.2`, `8.3`, `8.4`).
 - **Request Body:** `{ "phpVersion": "8.4" }`
-- **Response (`200 OK`):**
-```json
-{
-  "success": true,
-  "data": {
-    "planId": "plan_785df5d6",
-    "phpVersion": "8.4",
-    "updatedAt": "2026-10-27T15:31:00Z"
-  }
-}
-```
 
 #### `POST /customer/hosting/plans/:id/cancel`
-Submits a service cancellation request and creates a support ticket.
-- **Request Body:**
-```json
-{
-  "reason": "Project completed, no longer requiring this server",
-  "cancellationType": "END_OF_CYCLE" // "IMMEDIATE" | "END_OF_CYCLE"
-}
-```
-- **Response (`200 OK`):**
-```json
-{
-  "success": true,
-  "data": {
-    "ticketId": "TICK-41920",
-    "status": "CANCELLATION_PENDING"
-  }
-}
-```
+Submits a service cancellation request.
+- **Request Body:** `{ "reason": "No longer needed" }`
+- **Response (`200 OK`):** `{ "ticketId": "TICK-419208", "message": "Cancellation request submitted." }`
 
 ---
 
 ### 4.2 Websites / Virtual Host Management
 
 #### `GET /customer/hosting/plans/:id/websites`
-Lists all domains/websites configured in this hosting plan.
-- **Response (`200 OK`):** Array of `Website` items.
+Lists all virtual hosts for this hosting container.
 
 #### `POST /customer/hosting/plans/:id/websites`
-Adds a new domain / website to the hosting account. Triggers control panel API to create the vhost, directory structure, and Let's Encrypt SSL.
+Adds a new website to the hosting container.
 - **Request Body:**
 ```json
 {
@@ -577,44 +512,16 @@ Adds a new domain / website to the hosting account. Triggers control panel API t
   "phpVersion": "8.3"
 }
 ```
-- **Response (`201 Created`):**
-```json
-{
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "id": "web_02",
-    "hostingPlanId": "plan_785df5d6",
-    "domain": "craftsalad.dev",
-    "status": "active",
-    "createdAt": "2026-10-27T15:32:00Z",
-    "appType": "WordPress",
-    "phpVersion": "8.3",
-    "sslActive": true,
-    "sslIssuer": "Let's Encrypt Authority X3",
-    "sslExpiresInDays": 90,
-    "documentRoot": "/home/usr_salad_84/web/craftsalad.dev/public_html",
-    "storageUsedMb": 120,
-    "databaseCount": 0,
-    "emailCount": 0,
-    "isPrimary": false
-  }
-}
-```
-
-#### `GET /customer/hosting/websites/:id`
-Retrieves single website details.
+- **Response (`201 Created`):** Returns created `Website` entity.
 
 #### `DELETE /customer/hosting/websites/:id`
-Removes a virtual host and deletes associated docroot and configs after confirmation.
-- **Response (`200 OK`):** `{ "success": true, "message": "Website removed successfully" }`
+Deletes a website and its document root.
 
 ---
 
-### 4.3 Billing, Invoices & Payment Methods
+### 4.3 Customer Billing & PayHere Hosted Preapproval
 
 #### `GET /customer/billing/summary`
-Retrieves financial overview: next renewal, current price, credit balance.
 - **Response (`200 OK`):**
 ```json
 {
@@ -623,7 +530,7 @@ Retrieves financial overview: next renewal, current price, credit balance.
     "currentPlanName": "Web Hosting Essential",
     "currentPlanPrice": 9.99,
     "billingCycle": "monthly",
-    "nextBillingDate": "2026-11-15",
+    "nextBillingDate": "Nov 15, 2026",
     "autoRenew": true,
     "creditBalance": 25.0
   }
@@ -632,164 +539,154 @@ Retrieves financial overview: next renewal, current price, credit balance.
 
 #### `GET /customer/billing/invoices`
 Lists customer invoices with pagination.
-- **Query:** `page=1&limit=20`
+
+#### `GET /customer/billing/invoices/:id/pdf`
+Streams the binary PDF invoice (`Content-Type: application/pdf`).
+
+#### `GET /customer/billing/payment-methods`
+Lists saved tokenized credit cards (Masked only: zero raw PAN/CVV).
 - **Response (`200 OK`):**
 ```json
 {
   "success": true,
   "data": [
     {
-      "id": "inv_01",
-      "invoiceNumber": "INV-2026-0891",
-      "date": "2026-10-15",
-      "dueDate": "2026-10-15",
-      "period": "Oct 15, 2026 – Nov 14, 2026",
-      "amount": 9.99,
-      "currency": "USD",
-      "status": "paid",
-      "paymentMethodSummary": "Visa ending in 4242",
-      "items": [
-        {
-          "id": "li_01",
-          "description": "Web Hosting Essential — 25 GB NVMe SSD",
-          "quantity": 1,
-          "unitPrice": 9.99,
-          "total": 9.99
-        }
-      ],
-      "subtotal": 9.99,
-      "taxRate": 0,
-      "taxAmount": 0.0,
-      "total": 9.99,
-      "pdfUrl": "/api/v1/customer/billing/invoices/inv_01/pdf"
+      "id": "pm_01",
+      "provider": "PAYHERE",
+      "brand": "VISA",
+      "last4": "4242",
+      "expMonth": 8,
+      "expYear": 2028,
+      "cardholderName": "John Doe",
+      "isDefault": true
     }
   ]
 }
 ```
 
-#### `GET /customer/billing/invoices/:id/pdf`
-Streams generated invoice PDF binary (`application/pdf`).
-
-#### `GET /customer/billing/payment-methods`
-Lists saved credit cards / payment methods.
-
-#### `POST /customer/billing/payment-methods`
-Attaches a new payment card via Stripe / PayHere gateway tokenization.
-- **Request Body:**
-```json
-{
-  "gatewayToken": "tok_visa_4242",
-  "cardholderName": "Sarah Jenkins",
-  "isDefault": true
-}
-```
-
-#### `PATCH /customer/billing/payment-methods/:id/default`
-Sets specified payment method as primary default for recurring subscriptions.
-
-#### `DELETE /customer/billing/payment-methods/:id`
-Removes a saved card.
-
-#### `POST /customer/billing/redeem-promo`
-Redeems a gift card or account credit promo code.
-- **Request Body:** `{ "code": "WELCOME25" }`
+#### `POST /customer/billing/payhere/preapprove`
+Generates PayHere Preapproval authorization hash to open PayHere's hosted card tokenization modal.
+- **Request Body:** `{ "isDefault": true }`
 - **Response (`200 OK`):**
 ```json
 {
   "success": true,
   "data": {
-    "creditAdded": 25.0,
-    "newBalance": 50.0,
-    "message": "Welcome credit applied! $25.00 added to account balance."
+    "sandbox": true,
+    "merchant_id": "1224890",
+    "return_url": "https://serversalad.com/billing?preapproved=success",
+    "cancel_url": "https://serversalad.com/billing",
+    "notify_url": "https://api.serversalad.com/api/v1/webhooks/payhere",
+    "order_id": "PREAUTH-88219",
+    "items": "Server Salad Preapproval Vault",
+    "currency": "LKR",
+    "hash": "F8E7D6C5B4A3..."
   }
 }
 ```
 
----
+#### `PATCH /customer/billing/payment-methods/:id/default`
+Sets card as default for recurring subscriptions.
 
-### 4.4 Account Profile, Security & Notifications
+#### `DELETE /customer/billing/payment-methods/:id`
+Deletes a saved card token.
 
-#### `GET /customer/profile`
-Retrieves customer profile, contact details, active sessions, and SSH keys.
+#### `GET /customer/billing/address`
+Retrieves tax & legal entity billing address.
 
-#### `PATCH /customer/profile`
-Updates contact settings, company name, timezone, or email alert preferences.
-
-#### `POST /customer/profile/ssh-keys`
-Adds an authorized public SSH key for terminal access.
+#### `PUT /customer/billing/address`
+Updates billing address.
 - **Request Body:**
 ```json
 {
-  "name": "MacBook Pro - Workstation",
-  "publicKey": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC..."
+  "companyName": "Fresh Kitchen Media S.A.",
+  "contactName": "Sarah Jenkins",
+  "email": "sarah.jenkins@serversalad.cloud",
+  "vatId": "LU3029104",
+  "addressLine1": "2-4, Rue Edmond Reuter",
+  "addressLine2": "Suite 400",
+  "city": "Contern",
+  "postalCode": "L-5326",
+  "country": "Luxembourg"
 }
 ```
 
-#### `DELETE /customer/profile/ssh-keys/:id`
-Deletes an SSH key from all provisioned customer servers.
-
-#### `DELETE /customer/profile/sessions/:id`
-Revokes an active web browser session.
-
-#### `GET /customer/notifications`
-Retrieves real-time customer notification feed.
-- **Query:** `unreadOnly=false`
-
-#### `PATCH /customer/notifications/:id/read`
-Marks a notification as read.
-
-#### `PATCH /customer/notifications/read-all`
-Marks all notifications as read.
+#### `POST /customer/billing/redeem-promo`
+Redeems account credit vouchers (`SALAD10`, `SALAD2026`, `WELCOME25`).
+- **Request Body:** `{ "code": "WELCOME25" }`
+- **Response (`200 OK`):** `{ "success": true, "creditAdded": 25.0 }`
 
 ---
 
-## 5. Admin Portal (Superadmin & Infrastructure Operations)
+### 4.4 Profile, Account Security & Notifications
+
+#### `GET /customer/profile`
+Retrieves user profile, localization, SSH keys, and active web sessions.
+
+#### `PATCH /customer/profile`
+Updates contact settings, company, timezone, language, and notification alert toggles.
+- **Request Body:**
+```json
+{
+  "name": "Sarah Jenkins",
+  "email": "sarah.jenkins@serversalad.cloud",
+  "phone": "+1 (555) 382-9014",
+  "company": "Fresh Kitchen Media S.A.",
+  "timezone": "UTC+00:00 (London, Lisbon)",
+  "language": "English (United States)",
+  "emailDigest": true,
+  "securityAlerts": true,
+  "billingAlerts": true
+}
+```
+
+#### `POST /customer/profile/change-password`
+- **Request Body:** `{ "currentPassword": "...", "newPassword": "..." }`
+
+#### `POST /customer/profile/2fa/toggle`
+Toggles Two-Factor Authentication (TOTP).
+
+#### `GET /customer/profile/2fa/recovery-codes`
+Downloads 10 backup emergency recovery codes.
+
+#### `POST /customer/profile/ssh-keys`
+- **Request Body:** `{ "name": "Workstation", "keyString": "ssh-rsa AAAAB3..." }`
+
+#### `DELETE /customer/profile/ssh-keys/:id`
+
+#### `DELETE /customer/profile/sessions/:id`
+Revokes an individual session.
+
+#### `POST /customer/profile/sessions/revoke-others`
+Revokes all other active sessions except the current one.
+
+#### `DELETE /customer/profile`
+Permanently closes and deactivates the customer account.
+- **Request Body:** `{ "confirmation": "DELETE" }`
+
+#### `GET /customer/notifications`
+#### `PATCH /customer/notifications/:id/read`
+#### `PATCH /customer/notifications/read-all`
+#### `DELETE /customer/notifications/:id`
+#### `DELETE /customer/notifications` (clear all)
+
+---
+
+### 4.5 New Hosting Product Catalog
+*Source: `customer-portal/src/app/hosting/new/page.tsx`*
+
+#### `GET /customer/hosting/catalog`
+Lists available hosting instance tiers and regions (`lon1`, `sri1`).
+
+---
+
+## 5. Admin Portal (Operations & Infrastructure)
 
 ### 5.1 Infrastructure: Servers & Hypervisors (`/admin/servers`)
 
 #### `GET /admin/servers`
-Lists all bare-metal nodes, WHM servers, and VPS hypervisors.
-- **Access:** Staff (Role: `ADMINISTRATOR`, `STAFF`)
-- **Query:** `provider=WHM_CPANEL&status=ONLINE`
-- **Response (`200 OK`):**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "srv_fra_01",
-      "name": "FRA-WEB-NODE-01",
-      "hostname": "fra01.serversalad.net",
-      "ipAddress": "185.190.140.22",
-      "provider": "WHM_CPANEL",
-      "serverType": "SHARED_HOSTING",
-      "os": "CloudLinux 9.4 (Almalinux)",
-      "datacenter": "Frankfurt DC-01",
-      "location": "Frankfurt, Germany",
-      "status": "ONLINE",
-      "capacity": {
-        "cpuCores": 32,
-        "cpuUsagePct": 28.4,
-        "ramGb": 128,
-        "ramUsageGb": 48.2,
-        "storageGb": 2000,
-        "storageUsageGb": 640.5,
-        "accountsCount": 84,
-        "accountsLimit": 150
-      },
-      "allocatedServicesCount": 84,
-      "allocationEnabled": true,
-      "lastHealthCheck": "2026-10-27T15:20:00Z",
-      "providerConfig": {
-        "port": 2087,
-        "useSsl": true,
-        "hasApiToken": true,
-        "nameservers": ["ns1.serversalad.com", "ns2.serversalad.com"]
-      }
-    }
-  ]
-}
-```
+Lists all hosting nodes (WHM/cPanel and Proxmox KVM).
+- **Access:** `ADMINISTRATOR`, `STAFF`
 
 #### `POST /admin/servers`
 Registers a new hypervisor or hosting server node.
@@ -799,56 +696,44 @@ Registers a new hypervisor or hosting server node.
   "name": "FRA-WEB-NODE-03",
   "hostname": "fra03.serversalad.net",
   "ipAddress": "185.190.140.24",
-  "provider": "WHM_CPANEL",
+  "provider": "WHM_CPANEL", // "WHM_CPANEL" | "PROXMOX_KVM" | "HETZNER_CLOUD" | "AWS_EC2"
   "serverType": "SHARED_HOSTING",
   "datacenter": "Frankfurt, Germany (FRA-DC2)",
-  "location": "Frankfurt, Germany",
-  "accountsLimit": 50,
+  "location": "Frankfurt, DE",
+  "accountsLimit": 250,
   "allocationEnabled": true,
   "providerConfig": {
     "port": 2087,
     "useSsl": true,
     "apiUsername": "root",
-    "apiToken": "WHMAPITOKENSECRET123456789"
-  }
+    "apiToken": "WHMAPITOKENSECRET",
+    "clusterNode": "pve-node-beta", // only for PROXMOX_KVM
+    "nameservers": ["ns1.serversalad.com", "ns2.serversalad.com"]
+  },
+  "notes": "Configured in Frankfurt"
 }
 ```
-- **Response (`201 Created`):** Returns created server object.
 
 #### `POST /admin/servers/:id/test-connection`
-Executes an active API socket handshake ping to verify credentials and connectivity.
-- **Response (`200 OK`):**
-```json
-{
-  "success": true,
-  "data": {
-    "serverStatus": "ONLINE",
-    "latencyMs": 42,
-    "providerVersion": "cPanel & WHM v120.0.11",
-    "message": "Connection established successfully via TLS 1.3"
-  }
-}
-```
-
-#### `PATCH /admin/servers/:id/allocation`
-Toggles whether new customer orders can be provisioned onto this server.
-- **Request Body:** `{ "allocationEnabled": false }`
+Executes socket ping handshake to verify API connectivity.
 
 #### `POST /admin/servers/:id/health-check`
-Forces immediate telemetry polling of CPU, RAM, disk, and socket health.
+Polls live CPU, RAM, disk, and socket health from the node.
 
+#### `PATCH /admin/servers/:id/allocation`
+Toggles automated order placement onto this server.
+- **Request Body:** `{ "allocationEnabled": boolean }`
+
+#### `PATCH /admin/servers/:id/maintenance`
 #### `DELETE /admin/servers/:id`
-Decommissions a server. Only allowed if `allocatedServicesCount === 0`.
 
 ---
 
-### 5.2 Server Groups & Allocation Strategies (`/admin/server-groups`)
+### 5.2 Server Groups (`/admin/server-groups`)
+*Source: `admin-portal/src/components/pages/ServerGroupsPage.tsx`*
 
 #### `GET /admin/server-groups`
-Retrieves all server groups.
-
 #### `POST /admin/server-groups`
-Creates a pool of servers with an automated allocation policy.
 - **Request Body:**
 ```json
 {
@@ -858,338 +743,167 @@ Creates a pool of servers with an automated allocation policy.
   "location": "Frankfurt, Germany",
   "allocationPolicy": "BALANCED", // "BALANCED" | "PACK_FIRST" | "MANUAL"
   "serverIds": ["srv_fra_01", "srv_fra_02"],
-  "enabled": true
+  "enabled": true,
+  "description": "Primary high-performance web cluster"
 }
 ```
+#### `PATCH /admin/server-groups/:id`
+#### `DELETE /admin/server-groups/:id`
 
 ---
 
 ### 5.3 Products & Packages (`/admin/products`)
 
 #### `GET /admin/products`
-Retrieves all catalog packages with administrative metrics (services count, orders count).
-
 #### `POST /admin/products`
-Creates a new hosting product and maps it to a WHM package template and server group.
 - **Request Body:**
 ```json
 {
   "name": "Turbo NVMe Pro Plus",
   "slug": "turbo-nvme-pro-plus",
   "type": "SHARED",
+  "tagline": "High performance",
+  "description": "Optimized WordPress cPanel",
   "priceMonthly": 14.99,
   "priceAnnual": 149.90,
   "storageGb": 50,
   "domainLimit": 10,
   "bandwidthGb": 1000,
+  "emailAccounts": 10,
+  "databases": 5,
   "whmPackageName": "salad_turbo_pro_plus",
-  "serverGroupId": "grp_fra_pool_01",
+  "serverGroupId": "sg_shared_eu",
+  "vCpuCores": 2, // VPS
+  "ramGb": 4, // VPS
+  "diskType": "NVMe SSD",
   "published": true
 }
 ```
-
 #### `PATCH /admin/products/:id`
-Updates product specifications, pricing, or WHM mappings.
-
 #### `POST /admin/products/:id/duplicate`
-Clones an existing product into a new draft package.
-
 #### `PATCH /admin/products/:id/publish`
-Toggles public catalog visibility.
-
 #### `PATCH /admin/products/:id/disable-sales`
-Disables new customer sales while keeping grandfathered subscriptions active.
+#### `DELETE /admin/products/:id`
 
 ---
 
 ### 5.4 Customer Administration (`/admin/customers`)
 
 #### `GET /admin/customers`
-Retrieves customer directory with search, filter, and balance indicators.
-- **Query:** `search=Daniel&status=ACTIVE&page=1&limit=25`
-
+#### `POST /admin/customers`
+Admin manually registers a customer.
+- **Request Body:**
+```json
+{
+  "name": "Daniel Vance",
+  "email": "daniel@vancegrowth.com",
+  "company": "Vance Growth Ltd",
+  "phone": "+44 7700 900077",
+  "billingAddress": {
+    "line1": "100 Bishopsgate",
+    "city": "London",
+    "country": "United Kingdom",
+    "postalCode": "EC2N 4AG"
+  }
+}
+```
 #### `GET /admin/customers/:id`
-Retrieves complete customer dossier: profile, active services, orders history, unpaid invoices, tickets, and internal staff notes.
-
 #### `PATCH /admin/customers/:id`
-Updates customer profile or contact details.
-
 #### `PATCH /admin/customers/:id/toggle-login`
-Suspends or reinstates customer portal login access.
-
 #### `PATCH /admin/customers/:id/toggle-hosting`
-Suspends or unsuspends all hosting containers owned by this customer across all servers.
-
 #### `POST /admin/customers/:id/notes`
-Adds an immutable internal note visible only to staff.
-- **Request Body:** `{ "note": "Verified customer corporate identity via telephone call." }`
-
 #### `POST /admin/customers/:id/reset-password`
-Generates and dispatches a secure password reset link.
 
 ---
 
-### 5.5 Order Processing & Provisioning Engine (`/admin/orders` & `/admin/provisioning`)
+### 5.5 Orders & Provisioning Pipeline (`/admin/orders` & `/admin/provisioning`)
 
 #### `GET /admin/orders`
-Lists all customer orders with order status, payment status, and provisioning state.
-
 #### `GET /admin/orders/:id`
-Retrieves order details, customer snapshot, line items, and linked invoice.
-
+#### `PATCH /admin/orders/:id/status`
 #### `POST /admin/orders/:id/approve-provision`
-Approves a pending or awaiting-payment order, triggers automatic server group allocation, creates a new `ProvisioningJob`, and executes it.
-- **Response (`200 OK`):**
-```json
-{
-  "success": true,
-  "data": {
-    "orderId": "ord_9204",
-    "orderStatus": "COMPLETED",
-    "provisioningJobId": "job_8842",
-    "allocatedServerId": "srv_fra_01",
-    "message": "Order approved. Provisioning job dispatched to worker queue."
-  }
-}
-```
-
+Approves an order, allocates a server, and queues a provisioning job.
 #### `POST /admin/orders/:id/cancel`
-Cancels an order and voids uncollected invoices.
-
+#### `POST /admin/orders/:id/notes`
 #### `GET /admin/provisioning/jobs`
-Lists all automated provisioning jobs.
-- **Query:** `status=FAILED&page=1`
-
 #### `GET /admin/provisioning/jobs/:id`
-Retrieves step-by-step audit logs, technical error stack traces, and customer-safe error strings for a provisioning job.
-- **Response (`200 OK`):**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "job_8841",
-    "jobCode": "JOB-8841",
-    "customerId": "usr_c91a0b3",
-    "serviceDomain": "urbanloftdesign.co.uk",
-    "provider": "WHM_CPANEL",
-    "targetServerName": "FRA-WEB-NODE-01",
-    "operation": "CREATE_ACCOUNT",
-    "status": "FAILED",
-    "currentStep": "CREATE_CPANEL_ACCOUNT",
-    "attemptsCount": 1,
-    "customerSafeError": "Account setup is taking slightly longer than expected while we configure your server quotas.",
-    "internalErrorDetails": "[WHM_API_TIMEOUT] Socket closed by remote host after 15000ms during userdb initialization",
-    "steps": [
-      { "name": "VALIDATE_ALLOCATION", "status": "COMPLETED" },
-      { "name": "CREATE_CPANEL_ACCOUNT", "status": "FAILED", "log": "Socket timeout 15000ms" },
-      { "name": "CONFIGURE_DNS_ZONE", "status": "PENDING" },
-      { "name": "ISSUE_SSL_CERTIFICATE", "status": "PENDING" },
-      { "name": "DISPATCH_WELCOME_EMAIL", "status": "PENDING" }
-    ]
-  }
-}
-```
-
 #### `POST /admin/provisioning/jobs/:id/retry`
-Re-executes a failed provisioning job idempotently from its point of failure.
-- **Header:** `Idempotency-Key: <uuid>`
-- **Response (`200 OK`):**
-```json
-{
-  "success": true,
-  "data": {
-    "jobId": "job_8841",
-    "status": "RUNNING",
-    "message": "Job retry dispatched successfully."
-  }
-}
-```
+#### `POST /admin/provisioning/jobs/:id/cancel`
 
 ---
 
 ### 5.6 Hosting Services Management (`/admin/services`)
 
 #### `GET /admin/services`
-Lists all active hosting containers across the entire infrastructure.
-
-#### `POST /admin/services/:id/suspend`
-Suspends an active hosting account via WHM/cPanel or hypervisor API.
-- **Request Body:** `{ "reason": "Overdue payment on invoice INV-2026-089" }`
-
+#### `GET /admin/services/:id`
+#### `POST /admin/services/:id/suspend` (`{ "reason": "..." }`)
 #### `POST /admin/services/:id/unsuspend`
-Restores a suspended hosting account.
-
 #### `POST /admin/services/:id/terminate`
-Permanently destroys the hosting container and all data. Requires explicit super-admin confirmation.
-
-#### `POST /admin/services/:id/migrate-server`
-Triggers an automated live server-to-server migration (cPanel transfer API).
-- **Request Body:** `{ "targetServerId": "srv_fra_03" }`
-
-#### `POST /admin/services/:id/change-package`
-Upgrades or downgrades resource quotas and changes WHM package in-place.
-- **Request Body:** `{ "newProductId": "prod_web_pro" }`
+#### `POST /admin/services/:id/migrate-server` (`{ "targetServerId": "..." }`)
+#### `POST /admin/services/:id/change-package` (`{ "newProductId": "..." }`)
 
 ---
 
-### 5.7 Financial Administration: Invoices, Payments & Refunds
+### 5.7 Invoices, Payments & Refunds (`/admin/invoices`, `/admin/payments`, `/admin/subscriptions`)
 
 #### `GET /admin/invoices`
-Lists all customer invoices with status filters (`PAID`, `UNPAID`, `OVERDUE`, `REFUNDED`).
-
-#### `POST /admin/invoices`
-Generates a custom manual invoice for a customer.
-
+#### `POST /admin/invoices` (manual invoice)
 #### `POST /admin/invoices/:id/apply-credit`
-Applies account credit balance to an unpaid invoice.
-- **Request Body:** `{ "amount": 25.00, "note": "Promotional loyalty credit applied" }`
-
 #### `POST /admin/invoices/:id/void`
-Voids an outstanding or erroneous invoice.
-
 #### `POST /admin/invoices/:id/resend`
-Triggers email dispatch of the invoice PDF to the customer via Resend.
-
 #### `GET /admin/payments`
-Lists all gateway transactions with raw webhook payloads and processor authorization codes.
-
 #### `POST /admin/payments/:id/refund`
-Executes an authorized refund via PayHere or Stripe gateway API, updates the transaction status to `REFUNDED`, updates the corresponding Invoice, and logs a security audit event.
+Executes an authorized refund via PayHere or Stripe.
 - **Header:** `Idempotency-Key: <uuid>`
-- **Access:** Roles: `ADMINISTRATOR`, `BILLING_STAFF` (`STAFF` and `SUPPORT_AGENT` receive `403 Forbidden`)
-- **Request Body:**
-```json
-{
-  "amount": 49.00,
-  "reason": "Customer requested plan downgrade reversal"
-}
-```
-- **Response (`200 OK`):**
-```json
-{
-  "success": true,
-  "data": {
-    "paymentId": "txn_88412",
-    "status": "REFUNDED",
-    "refundedAmount": 49.00,
-    "refundedAt": "2026-10-27T15:35:00Z",
-    "invoiceId": "inv_2026_089",
-    "invoiceStatus": "REFUNDED"
-  }
-}
-```
-
+- **Access:** `ADMINISTRATOR`, `BILLING_STAFF` (`STAFF` and `SUPPORT_AGENT` receive `403 Forbidden`)
+- **Request Body:** `{ "amount": 49.00, "reason": "Customer requested duplicate charge reversal" }`
+- **Response (`200 OK`):** `{ "success": true, "status": "REFUNDED", "refundedAmount": 49.00 }`
 #### `GET /admin/subscriptions`
-Lists all active recurring subscriptions with renewal schedules and grace period counters.
-
+#### `GET /admin/subscriptions/:id`
+#### `PATCH /admin/subscriptions/:id`
 #### `POST /admin/subscriptions/:id/retry-renewal`
-Manually triggers a recurring card charge attempt for a past-due subscription.
+#### `POST /admin/subscriptions/:id/cancel`
 
 ---
 
-### 5.8 Support Tickets & Real-Time Live Chat (`/admin/tickets` & `/admin/live-chat`)
+### 5.8 Support Tickets, Live Chat & System Operations
 
 #### `GET /admin/tickets`
-Lists support tickets filtered by department, status, or assigned agent.
-
 #### `GET /admin/tickets/:id`
-Retrieves support thread including customer messages and private internal staff notes.
-
-#### `POST /admin/tickets/:id/reply`
-Posts a message to the support thread.
-- **Request Body:**
-```json
-{
-  "content": "Verified via WHM EasyApache4: curl extension was rebuilt and enabled on PHP 8.3.",
-  "isInternalNote": true // If true, stored with amber highlight and hidden from customer portal
-}
-```
-- **Response (`201 Created`):** Returns added message object.
-
-#### `PATCH /admin/tickets/:id`
-Updates ticket department, priority (`LOW`, `MEDIUM`, `HIGH`, `URGENT`), status (`OPEN`, `WAITING_FOR_CUSTOMER`, `CLOSED`), or reassigns to another staff agent (`assignedAgentId`).
-
+#### `POST /admin/tickets/:id/reply` (`{ "content": "...", "isInternalNote": true }`)
+#### `PATCH /admin/tickets/:id` (`department`, `priority`, `status`, `assignedAgentId`)
 #### `GET /admin/live-chat/sessions`
-Lists all active and waiting live chat sessions.
-
 #### `POST /admin/live-chat/sessions/:id/claim`
-Claims a waiting live chat session for the authenticated staff agent.
-
 #### `POST /admin/live-chat/sessions/:id/messages`
-Sends a real-time message to the customer over live chat.
-
 #### `POST /admin/live-chat/sessions/:id/close`
-Resolves and closes a live chat session.
-
----
-
-### 5.9 Staff Directory & Role-Based Access Control (`/admin/staff`)
-
+#### `GET /admin/domains`
+#### `POST /admin/domains/:id/check-dns`
+#### `POST /admin/domains/:id/reissue-ssl`
+#### `GET /admin/notifications`
+#### `POST /admin/notifications/:id/retry`
+#### `GET /admin/email-templates`
+#### `PATCH /admin/email-templates/:id`
 #### `GET /admin/staff`
-Lists all staff accounts, roles, departments, and active statuses.
-- **Access:** `ADMINISTRATOR` only
-
 #### `POST /admin/staff`
-Invites a new staff member.
-- **Request Body:**
-```json
-{
-  "name": "Marcus Vance",
-  "email": "marcus@serversalad.net",
-  "role": "SUPPORT_AGENT", // "ADMINISTRATOR" | "STAFF" | "SUPPORT_AGENT" | "BILLING_STAFF"
-  "department": "Technical Support"
-}
-```
-
 #### `PATCH /admin/staff/:id/role`
-Changes a staff member's administrative role.
-
 #### `PATCH /admin/staff/:id/status`
-Toggles staff account active/deactivated state.
-
----
-
-### 5.10 System Audit Logs & Global Settings (`/admin/audit-logs` & `/admin/settings`)
-
 #### `GET /admin/audit-logs`
-Queries the immutable administrative security audit trail.
-- **Query:** `actor=admin@serversalad.net&resourceType=PAYMENT&page=1`
-- **Response (`200 OK`):**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "audit_99182",
-      "timestamp": "2026-10-27T15:35:01Z",
-      "actor": "admin@serversalad.net",
-      "actorRole": "ADMINISTRATOR",
-      "action": "EXECUTE_REFUND",
-      "resourceType": "PAYMENT",
-      "resourceId": "txn_88412",
-      "outcome": "SUCCESS",
-      "details": "Authorized refund of $49.00 USD processed for payment txn_88412. Reason: Customer requested plan downgrade reversal."
-    }
-  ]
-}
-```
-
 #### `GET /admin/settings`
-Retrieves global integration configs for WHM, VPS hypervisors, PayHere gateway, and Resend email service.
-
 #### `PATCH /admin/settings`
-Updates integration credentials, timeout thresholds, tax rates, or maintenance mode.
+#### `POST /admin/settings/whm/test`
+#### `POST /admin/settings/payhere/test`
+#### `GET /admin/reports/analytics` (`?range=7d|30d|mtd|ytd`)
 
 ---
 
-## 6. External Webhooks & Real-Time Specifications
+## 6. Webhooks & Real-Time Protocols
 
-### 6.1 Payment Gateway Webhooks (`/webhooks`)
-
-#### `POST /webhooks/payhere`
-Ingests PayHere payment settlement notifications.
-- **Verification:** HMAC-MD5 signature verification over `merchant_id + order_id + payhere_amount + payhere_currency + status_code + md5_secret`.
-- **Payload:**
+### 6.1 PayHere Payment Gateway Webhook (`/webhooks/payhere`)
+Handles both checkout payment settlements and customer preapproval tokenization.
+- **Access:** Public (Signature Verified)
+- **Signature Verification:**
+  `md5sig = strtoupper(md5(merchant_id + order_id + payhere_amount + payhere_currency + status_code + strtoupper(md5(merchant_secret))))`
+- **Checkout Payment Payload:**
 ```json
 {
   "merchant_id": "1224890",
@@ -1197,109 +911,36 @@ Ingests PayHere payment settlement notifications.
   "payment_id": "320025184910",
   "payhere_amount": "458.00",
   "payhere_currency": "LKR",
-  "status_code": "2", // 2 = Success, 0 = Pending, -1 = Canceled, -2 = Failed, -3 = Chargedback
+  "status_code": "2", // 2 = Success, 0 = Pending, -1 = Canceled, -2 = Failed
   "md5sig": "E4D909C290D0FB1CA068FFADD...",
   "custom_1": "usr_alex_01",
   "custom_2": "inv_88129"
 }
 ```
-- **Action:** Updates Invoice to `PAID`, records `PaymentTransaction`, and triggers `ProvisioningJob`.
-
-#### `POST /webhooks/stripe`
-Ingests Stripe events (`payment_intent.succeeded`, `charge.refunded`, `invoice.payment_failed`).
-- **Verification:** `Stripe-Signature` cryptographic header verification using webhook signing secret.
-
----
-
-### 6.2 Real-Time WebSocket Protocols
-
-#### WebSocket URL: `wss://api.serversalad.com/ws`
-
-#### 1. Live Support Chat (`/ws/live-chat`)
-- **Client Connect Query:** `wss://api.serversalad.com/ws/live-chat?token=<jwt>`
-- **Client -> Server Events:**
-  - `join_session`: `{ "sessionId": "chat_01" }`
-  - `send_message`: `{ "sessionId": "chat_01", "text": "Hello, my domain is not pointing yet." }`
-  - `typing`: `{ "sessionId": "chat_01", "isTyping": true }`
-- **Server -> Client Events:**
-  - `message_received`: `{ "id": "msg_90", "sender": "AGENT", "text": "...", "timestamp": "..." }`
-  - `agent_claimed`: `{ "sessionId": "chat_01", "agentName": "Sarah Jenkins" }`
-  - `session_closed`: `{ "sessionId": "chat_01" }`
-
-#### 2. Provisioning Status Updates (`/ws/provisioning`)
-- **Client Connect Query:** `wss://api.serversalad.com/ws/provisioning?jobId=job_8841`
-- **Server -> Client Events:**
-  - `step_progress`:
-  ```json
-  {
-    "jobId": "job_8841",
-    "stepName": "CREATE_CPANEL_ACCOUNT",
-    "status": "RUNNING"
-  }
-  ```
-  - `job_completed`:
-  ```json
-  {
-    "jobId": "job_8841",
-    "status": "SUCCEEDED",
-    "service": {
-      "id": "srv_41029",
-      "primaryDomain": "nodegen.com",
-      "serverIp": "198.51.100.42"
-    }
-  }
-  ```
-  - `job_failed`:
-  ```json
-  {
-    "jobId": "job_8841",
-    "status": "FAILED",
-    "customerSafeError": "Account setup is taking slightly longer than expected while we configure your server quotas."
-  }
-  ```
-
----
-
-## 7. Complete TypeScript Interface Definitions (Shared DTOs)
-
-```typescript
-// Shared Enums
-export type StaffRole = 'ADMINISTRATOR' | 'STAFF' | 'SUPPORT_AGENT' | 'BILLING_STAFF';
-export type ServerProvider = 'WHM_CPANEL' | 'PROXMOX_KVM' | 'HETZNER_CLOUD' | 'AWS_EC2';
-export type ServerType = 'SHARED_HOSTING' | 'VPS_NODE' | 'DEDICATED';
-export type ServerHealthStatus = 'ONLINE' | 'MAINTENANCE' | 'DEGRADED' | 'OFFLINE';
-export type ProductType = 'SHARED' | 'VPS';
-export type CustomerStatus = 'ACTIVE' | 'SUSPENDED' | 'PENDING_VERIFICATION';
-export type OrderStatus = 'PENDING' | 'AWAITING_PAYMENT' | 'PAID' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED' | 'FAILED';
-export type PaymentStatus = 'PENDING' | 'PAID' | 'REFUNDED' | 'FAILED' | 'VOIDED';
-export type ServiceStatus = 'PENDING' | 'PROVISIONING' | 'ACTIVE' | 'SUSPENDED' | 'TERMINATED';
-export type ProvisioningJobStatus = 'QUEUED' | 'RUNNING' | 'SUCCEEDED' | 'FAILED' | 'RETRYING' | 'CANCELLED';
-export type ProvisioningOperation = 'CREATE_ACCOUNT' | 'SUSPEND_ACCOUNT' | 'UNSUSPEND_ACCOUNT' | 'TERMINATE_ACCOUNT' | 'UPGRADE_PACKAGE';
-export type TicketPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
-export type TicketStatus = 'OPEN' | 'IN_PROGRESS' | 'WAITING_FOR_CUSTOMER' | 'WAITING_FOR_STAFF' | 'CLOSED';
-export type TicketDepartment = 'TECHNICAL_SUPPORT' | 'BILLING' | 'INFRASTRUCTURE' | 'SALES';
-
-// Standard API Response DTO
-export interface ApiResponse<T> {
-  success: boolean;
-  statusCode: number;
-  timestamp: string;
-  data: T;
-  meta?: {
-    page: number;
-    limit: number;
-    totalItems: number;
-    totalPages: number;
-  };
-}
-
-export interface ApiErrorResponse {
-  success: false;
-  statusCode: number;
-  timestamp: string;
-  error: string;
-  message: string;
-  details?: Array<{ field: string; issue: string }>;
-  path: string;
+- **Preapproval Tokenization Webhook Payload:**
+```json
+{
+  "merchant_id": "1224890",
+  "order_id": "PREAUTH-88219",
+  "customer_token": "ct_99a8b1c7d34e20984",
+  "card_holder_name": "Alex Jayawardena",
+  "card_no": "************4242",
+  "card_expiry": "08/28",
+  "status_code": "2",
+  "md5sig": "A1B2C3D4E5F6..."
 }
 ```
+- **Backend Action:** Stores masked card info (`brand: VISA`, `last4: 4242`, `expMonth: 8`, `expYear: 2028`) and `customer_token` on the `PaymentMethod` model in PostgreSQL via Prisma.
+
+---
+
+### 6.2 Real-Time WebSocket Protocols (`wss://api.serversalad.com/ws`)
+
+#### 1. Live Support Chat (`/ws/live-chat`)
+- **Query:** `wss://api.serversalad.com/ws/live-chat?token=<jwt>`
+- **Client -> Server:** `join_session`, `send_message`, `typing`
+- **Server -> Client:** `message_received`, `agent_claimed`, `session_closed`
+
+#### 2. Provisioning Real-Time Timeline (`/ws/provisioning`)
+- **Query:** `wss://api.serversalad.com/ws/provisioning?jobId=job_8841`
+- **Server -> Client:** `step_progress`, `job_completed`, `job_failed`
