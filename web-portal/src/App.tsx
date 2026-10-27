@@ -622,7 +622,8 @@ export default function App() {
                 Infrastructure
               </button>
               <button 
-                className="text-white/80 text-[13px] font-medium hover:text-white transition-colors"
+                onClick={() => navigate('/pricing')}
+                className="text-white/80 text-[13px] font-medium hover:text-white transition-colors cursor-pointer"
                 onMouseEnter={() => setHoveredMenu(null)}
               >
                 Pricing

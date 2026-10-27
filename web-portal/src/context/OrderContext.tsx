@@ -56,6 +56,39 @@ export interface OrderState {
 }
 
 export const DEFAULT_PLANS: Record<string, HostingPlan> = {
+  starter: {
+    id: 'starter',
+    name: 'Starter Salad',
+    tagline: 'Light appetizer portion with 2-Core power',
+    priceMonthlyLkr: 549,
+    priceRenewalUsd: 1.80,
+    cpu: '2 Cores CPU',
+    storage: '1 GB NVMe Storage',
+    domainsAllowed: 1,
+    trial: true,
+  },
+  standard: {
+    id: 'standard',
+    name: 'Standard Salad',
+    tagline: 'Hearty main course with 2-Core power',
+    priceMonthlyLkr: 649,
+    priceRenewalUsd: 2.15,
+    cpu: '2 Cores CPU',
+    storage: '9 GB NVMe Storage',
+    domainsAllowed: 3,
+    trial: true,
+  },
+  premium: {
+    id: 'premium',
+    name: 'Premium Salad',
+    tagline: 'Generous banquet platter with 2-Core power',
+    priceMonthlyLkr: 829,
+    priceRenewalUsd: 2.75,
+    cpu: '2 Cores CPU',
+    storage: '30 GB NVMe Storage',
+    domainsAllowed: 10,
+    trial: true,
+  },
   web: {
     id: 'web',
     name: 'Web Hosting',

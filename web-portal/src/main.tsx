@@ -13,6 +13,7 @@ import { Provisioning } from './pages/order/Provisioning';
 import { ActivationSuccess } from './pages/order/ActivationSuccess';
 import { Login } from './pages/auth/Login';
 import { Register } from './pages/auth/Register';
+import { PricingPage } from './pages/PricingPage';
 import './index.css';
 
 createRoot(document.getElementById('app')!).render(
@@ -22,6 +23,9 @@ createRoot(document.getElementById('app')!).render(
         <Routes>
           {/* Main Website Landing Page */}
           <Route path="/" element={<App />} />
+
+          {/* Pricing Page */}
+          <Route path="/pricing" element={<PricingPage />} />
 
           {/* Authentication */}
           <Route path="/login" element={<Login />} />
