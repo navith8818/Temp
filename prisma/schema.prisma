@@ -1,0 +1,938 @@
+// Prisma Schema for Server Salad Cloud Services (PostgreSQL)
+// Models all entities across Web Portal, Customer Portal, and Admin Portal
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ----------------------------------------------------
+// ENUMS
+// ----------------------------------------------------
+
+enum StaffRole {
+  ADMINISTRATOR
+  STAFF
+  SUPPORT_AGENT
+  BILLING_STAFF
+}
+
+enum StaffStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum ServerProvider {
+  WHM_CPANEL
+  PROXMOX_KVM
+  HETZNER_CLOUD
+  AWS_EC2
+}
+
+enum ServerType {
+  SHARED_HOSTING
+  VPS_NODE
+  DEDICATED
+}
+
+enum ServerHealthStatus {
+  ONLINE
+  MAINTENANCE
+  DEGRADED
+  OFFLINE
+}
+
+enum AllocationPolicy {
+  BALANCED
+  PACK_FIRST
+  MANUAL
+}
+
+enum ServerGroupPurpose {
+  SHARED_HOSTING
+  VPS_CLUSTER
+  DEDICATED_ISOLATION
+}
+
+enum ProductType {
+  SHARED
+  VPS
+}
+
+enum CustomerStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+}
+
+enum BillingCycle {
+  MONTHLY
+  ANNUAL
+}
+
+enum OrderStatus {
+  PENDING
+  AWAITING_PAYMENT
+  PAID
+  PROCESSING
+  COMPLETED
+  CANCELLED
+  FAILED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+  FAILED
+  VOIDED
+}
+
+enum PaymentProvider {
+  PAYHERE
+  STRIPE
+  MANUAL
+  BANK_TRANSFER
+}
+
+enum CardBrand {
+  VISA
+  MASTERCARD
+  AMEX
+  PAYPAL
+}
+
+enum ServiceStatus {
+  PENDING
+  PROVISIONING
+  ACTIVE
+  SUSPENDED
+  TERMINATED
+}
+
+enum ProvisioningJobStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  RETRYING
+  CANCELLED
+}
+
+enum ProvisioningOperation {
+  CREATE_ACCOUNT
+  SUSPEND_ACCOUNT
+  UNSUSPEND_ACCOUNT
+  TERMINATE_ACCOUNT
+  UPGRADE_PACKAGE
+}
+
+enum ProvisioningStepStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum InvoiceStatus {
+  PAID
+  UNPAID
+  OVERDUE
+  REFUNDED
+  CANCELLED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  SUSPENDED
+}
+
+enum AppType {
+  WORDPRESS
+  NODE_JS
+  PHP_STATIC
+  LARAVEL
+  CUSTOM
+}
+
+enum WebsiteStatus {
+  ACTIVE
+  NEEDS_DNS
+  SSL_PENDING
+  MAINTENANCE
+}
+
+enum DnsStatus {
+  POINTED
+  PENDING_PROPAGATION
+  MISCONFIGURED
+}
+
+enum SslStatus {
+  ACTIVE_LETS_ENCRYPT
+  EXPIRING_SOON
+  NONE
+  PENDING
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_FOR_CUSTOMER
+  WAITING_FOR_STAFF
+  CLOSED
+}
+
+enum TicketDepartment {
+  TECHNICAL_SUPPORT
+  BILLING
+  INFRASTRUCTURE
+  SALES
+}
+
+enum SenderRole {
+  CUSTOMER
+  STAFF
+  SYSTEM
+}
+
+enum LiveChatStatus {
+  WAITING
+  ACTIVE
+  CLOSED
+}
+
+enum NotificationType {
+  SYSTEM
+  SECURITY
+  BILLING
+  BACKUP
+}
+
+enum DeliveryStatus {
+  DELIVERED
+  BOUNCED
+  QUEUED
+  FAILED
+}
+
+enum NotificationChannel {
+  EMAIL
+  IN_APP
+  SMS
+}
+
+enum AuditResourceType {
+  SERVER
+  PACKAGE
+  CUSTOMER
+  SERVICE
+  ORDER
+  INVOICE
+  PAYMENT
+  STAFF
+  PROVISIONING
+  SETTINGS
+}
+
+enum AuditOutcome {
+  SUCCESS
+  FAILURE
+  WARNING
+}
+
+// ----------------------------------------------------
+// 1. IDENTITY, CUSTOMERS & STAFF
+// ----------------------------------------------------
+
+model Customer {
+  id               String         @id @default(uuid())
+  email            String         @unique
+  passwordHash     String?        // Nullable if registered via Google OAuth
+  googleId         String?        @unique
+  fullName         String
+  company          String?
+  phone            String?
+  status           CustomerStatus @default(ACTIVE)
+  loginSuspended   Boolean        @default(false)
+  hostingSuspended Boolean        @default(false)
+  creditBalance    Decimal        @default(0.00) @db.Decimal(10, 2)
+  registeredDate   DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  // Billing & Localization
+  addressLine1     String?
+  addressLine2     String?
+  city             String?
+  postalCode       String?
+  country          String?
+  vatId            String?
+  vatValidated     Boolean        @default(false)
+  timezone         String         @default("UTC+00:00 (London, Lisbon)")
+  language         String         @default("English (United States)")
+
+  // Notification Preferences
+  emailDigest      Boolean        @default(true)
+  securityAlerts   Boolean        @default(true)
+  billingAlerts    Boolean        @default(true)
+  twoFactorEnabled Boolean        @default(false)
+
+  // Internal Staff Notes (Array of staff strings)
+  internalNotes    String[]       @default([])
+
+  // Relations
+  sessions         CustomerSession[]
+  sshKeys          CustomerSSHKey[]
+  notifications    CustomerNotification[]
+  paymentMethods   PaymentMethod[]
+  orders           Order[]
+  services         HostingService[]
+  invoices         Invoice[]
+  payments         PaymentTransaction[]
+  subscriptions    Subscription[]
+  tickets          SupportTicket[]
+  liveChatSessions LiveChatSession[]
+  domains          CustomerDomain[]
+
+  @@index([email])
+  @@index([status])
+}
+
+model CustomerSession {
+  id         String   @id @default(uuid())
+  customerId String
+  device     String
+  browser    String
+  ip         String
+  location   String
+  lastActive DateTime @default(now())
+  isCurrent  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+}
+
+model CustomerSSHKey {
+  id          String   @id @default(uuid())
+  customerId  String
+  name        String
+  fingerprint String
+  publicKey   String   @db.Text
+  createdAt   DateTime @default(now())
+
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+}
+
+model CustomerNotification {
+  id          String           @id @default(uuid())
+  customerId  String
+  title       String
+  description String           @db.Text
+  type        NotificationType @default(SYSTEM)
+  read        Boolean          @default(false)
+  link        String?
+  createdAt   DateTime         @default(now())
+
+  customer    Customer         @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId, read])
+}
+
+model StaffMember {
+  id           String      @id @default(uuid())
+  name         String
+  email        String      @unique
+  passwordHash String
+  role         StaffRole   @default(SUPPORT_AGENT)
+  status       StaffStatus @default(ACTIVE)
+  department   String      @default("Customer Support")
+  avatar       String?
+  lastActive   DateTime    @default(now())
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  // Assigned support operations
+  assignedTickets SupportTicket[]
+  liveChats       LiveChatSession[]
+
+  @@index([email])
+  @@index([role])
+}
+
+// ----------------------------------------------------
+// 2. PAYMENT METHODS & TOKENIZATION (PCI COMPLIANT)
+// ----------------------------------------------------
+
+model PaymentMethod {
+  id                   String          @id @default(uuid())
+  customerId           String
+  provider             PaymentProvider @default(PAYHERE)
+  brand                CardBrand       @default(VISA)
+  last4                String          @db.VarChar(4)
+  expMonth             Int
+  expYear              Int
+  cardholderName       String
+  isDefault            Boolean         @default(false)
+  
+  // PayHere Preapproval Token for recurring server charges
+  // (Zero raw PAN or CVV stored in our database!)
+  payhereCustomerToken String?         @unique
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+
+  customer             Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+}
+
+// ----------------------------------------------------
+// 3. INFRASTRUCTURE & SERVERS
+// ----------------------------------------------------
+
+model HostingServer {
+  id                     String             @id @default(uuid())
+  name                   String
+  hostname               String             @unique
+  ipAddress              String
+  provider               ServerProvider     @default(WHM_CPANEL)
+  serverType             ServerType         @default(SHARED_HOSTING)
+  os                     String             @default("CloudLinux 9.4 (Almalinux)")
+  datacenter             String
+  location               String
+  status                 ServerHealthStatus @default(ONLINE)
+
+  // Capacity & Quotas
+  cpuCores               Int                @default(32)
+  cpuUsagePct            Float              @default(0.0)
+  ramGb                  Int                @default(128)
+  ramUsageGb             Float              @default(0.0)
+  storageGb              Int                @default(2000)
+  storageUsageGb         Float              @default(0.0)
+  accountsCount          Int                @default(0)
+  accountsLimit          Int                @default(250)
+  allocatedServicesCount Int                @default(0)
+  allocationEnabled      Boolean            @default(true)
+  lastHealthCheck        DateTime           @default(now())
+
+  // Provider Connection Credentials
+  port                   Int                @default(2087)
+  useSsl                 Boolean            @default(true)
+  apiUsername            String             @default("root")
+  apiTokenEncrypted      String?            @db.Text
+  clusterNode            String?            // Proxmox node ID
+  nameservers            String[]           @default(["ns1.serversalad.com", "ns2.serversalad.com"])
+  notes                  String?            @db.Text
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  // Group membership
+  serverGroupId          String?
+  serverGroup            ServerGroup?       @relation(fields: [serverGroupId], references: [id], onDelete: SetNull)
+
+  // Hosted accounts and provisioning
+  services               HostingService[]
+  provisioningJobs       ProvisioningJob[]
+
+  @@index([status])
+  @@index([serverGroupId])
+}
+
+model ServerGroup {
+  id               String             @id @default(uuid())
+  name             String
+  purpose          ServerGroupPurpose @default(SHARED_HOSTING)
+  provider         ServerProvider     @default(WHM_CPANEL)
+  location         String
+  allocationPolicy AllocationPolicy   @default(BALANCED)
+  enabled          Boolean            @default(true)
+  description      String?            @db.Text
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  servers          HostingServer[]
+  products         HostingProduct[]
+
+  @@index([purpose])
+}
+
+// ----------------------------------------------------
+// 4. COMMERCIAL PRODUCTS & CATALOG
+// ----------------------------------------------------
+
+model HostingProduct {
+  id                 String       @id @default(uuid())
+  slug               String       @unique
+  name               String
+  type               ProductType  @default(SHARED)
+  tagline            String
+  description        String       @db.Text
+  published          Boolean      @default(true)
+  isNewSalesDisabled Boolean      @default(false)
+  priceMonthly       Decimal      @db.Decimal(10, 2)
+  priceAnnual        Decimal      @db.Decimal(10, 2)
+  setupFee           Decimal      @default(0.00) @db.Decimal(10, 2)
+  trialDays          Int          @default(0)
+
+  // Shared limits
+  storageGb          Int
+  domainLimit        Int
+  bandwidthGb        Int
+  emailAccounts      Int          @default(5)
+  databases          Int          @default(5)
+  sslIncluded        Boolean      @default(true)
+  backupsIncluded    Boolean      @default(true)
+  whmPackageName     String?
+
+  // VPS specs
+  vCpuCores          Int?
+  ramGb              Int?
+  diskType           String?      @default("NVMe SSD")
+  dedicatedIps       Int?         @default(1)
+  osOptions          String[]     @default(["Ubuntu 24.04", "Debian 12", "AlmaLinux 9"])
+
+  // Server group allocation
+  serverGroupId      String
+  serverGroup        ServerGroup  @relation(fields: [serverGroupId], references: [id])
+
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  services           HostingService[]
+  orderItems         OrderItem[]
+
+  @@index([slug])
+  @@index([published])
+}
+
+// ----------------------------------------------------
+// 5. ORDERS & CHECKOUT LIFECYCLE
+// ----------------------------------------------------
+
+model Order {
+  id                  String           @id @default(uuid())
+  orderNumber         String           @unique
+  customerId          String
+  orderDate           DateTime         @default(now())
+  total               Decimal          @db.Decimal(10, 2)
+  currency            String           @default("LKR")
+  orderStatus         OrderStatus      @default(PROCESSING)
+  paymentStatus       PaymentStatus    @default(PENDING)
+
+  // Migration details if applicable
+  setupMode           String           @default("new") // "new" | "migrate"
+  migrationSourceUrl  String?
+  migrationCpanelUser String?
+  migrationNotes      String?          @db.Text
+
+  // Promos & Add-ons
+  promoCode           String?
+  discountPercentage  Int              @default(0)
+  includeAutoBackup   Boolean          @default(true)
+  emailPlanId         String?
+
+  // Invoice linkage
+  invoiceId           String?          @unique
+
+  customer            Customer         @relation(fields: [customerId], references: [id])
+  invoice             Invoice?         @relation(fields: [invoiceId], references: [id])
+  items               OrderItem[]
+  provisioningJobs    ProvisioningJob[]
+
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  @@index([customerId])
+  @@index([orderStatus])
+}
+
+model OrderItem {
+  id           String         @id @default(uuid())
+  orderId      String
+  productId    String
+  productName  String
+  billingCycle BillingCycle   @default(MONTHLY)
+  domain       String
+  amount       Decimal        @db.Decimal(10, 2)
+
+  order        Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product      HostingProduct @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+}
+
+// ----------------------------------------------------
+// 6. PROVISIONED HOSTING SERVICES & WEBSITES
+// ----------------------------------------------------
+
+model HostingService {
+  id                  String         @id @default(uuid())
+  customerId          String
+  productId           String
+  primaryDomain       String
+  serverId            String
+  provider            ServerProvider @default(WHM_CPANEL)
+  status              ServiceStatus  @default(PROVISIONING)
+
+  // Control panel identity
+  controlPanelUrl     String
+  controlPanelUsername String
+  serverIp            String
+
+  // Financial / Renewal
+  billingCycle        BillingCycle   @default(MONTHLY)
+  renewalPrice        Decimal        @db.Decimal(10, 2)
+  nextRenewalDate     DateTime
+  autoRenew           Boolean        @default(true)
+
+  // Metrics & Quotas
+  storageUsedGb       Float          @default(0.0)
+  storageLimitGb      Float
+  bandwidthUsedGb     Float          @default(0.0)
+  bandwidthLimitGb    Float
+  inodesUsed          Int            @default(0)
+  inodesLimit         Int            @default(250000)
+  mailboxesUsed       Int            @default(0)
+  mailboxesLimit      Int            @default(10)
+
+  // Server Runtime
+  phpVersion          String         @default("8.3")
+  sslActive           Boolean        @default(true)
+  suspensionReason    String?
+
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  customer            Customer       @relation(fields: [customerId], references: [id])
+  product             HostingProduct @relation(fields: [productId], references: [id])
+  server              HostingServer  @relation(fields: [serverId], references: [id])
+  websites            Website[]
+  provisioningJobs    ProvisioningJob[]
+  subscriptions       Subscription[]
+  supportTickets      SupportTicket[]
+  domains             CustomerDomain[]
+
+  @@index([customerId])
+  @@index([serverId])
+  @@index([status])
+}
+
+model Website {
+  id               String         @id @default(uuid())
+  serviceId        String
+  domain           String         @unique
+  status           WebsiteStatus  @default(ACTIVE)
+  appType          AppType        @default(WORDPRESS)
+  appVersion       String?        @default("6.9")
+  phpVersion       String         @default("8.3")
+  sslActive        Boolean        @default(true)
+  sslIssuer        String?        @default("Let's Encrypt Authority X3")
+  sslExpiresInDays Int?           @default(90)
+  documentRoot     String
+  storageUsedMb    Int            @default(120)
+  databaseCount    Int            @default(0)
+  emailCount       Int            @default(0)
+  isPrimary        Boolean        @default(false)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  service          HostingService @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId])
+  @@index([domain])
+}
+
+// ----------------------------------------------------
+// 7. AUTOMATED PROVISIONING ENGINE
+// ----------------------------------------------------
+
+model ProvisioningJob {
+  id                   String                @id @default(uuid())
+  jobCode              String                @unique // e.g. "JOB-8841"
+  customerId           String
+  serviceId            String
+  serviceDomain        String
+  orderId              String
+  provider             ServerProvider        @default(WHM_CPANEL)
+  targetServerId       String
+  operation            ProvisioningOperation @default(CREATE_ACCOUNT)
+  status               ProvisioningJobStatus @default(QUEUED)
+  attemptsCount        Int                   @default(1)
+  currentStep          String                @default("VALIDATE_ALLOCATION")
+  customerSafeError    String?               @db.Text
+  internalErrorDetails String?               @db.Text
+  createdAt            DateTime              @default(now())
+  completedAt          DateTime?
+
+  customer             Customer              @relation(fields: [customerId], references: [id])
+  service              HostingService        @relation(fields: [serviceId], references: [id])
+  order                Order                 @relation(fields: [orderId], references: [id])
+  targetServer         HostingServer         @relation(fields: [targetServerId], references: [id])
+  steps                ProvisioningStep[]
+
+  @@index([status])
+  @@index([serviceId])
+}
+
+model ProvisioningStep {
+  id          String                 @id @default(uuid())
+  jobId       String
+  name        String                 // "CREATE_CPANEL_ACCOUNT", "CONFIGURE_DNS_ZONE", etc.
+  status      ProvisioningStepStatus @default(PENDING)
+  startedAt   DateTime?
+  completedAt DateTime?
+  log         String?                @db.Text
+
+  job         ProvisioningJob        @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId])
+}
+
+// ----------------------------------------------------
+// 8. FINANCIAL: INVOICES, PAYMENTS & SUBSCRIPTIONS
+// ----------------------------------------------------
+
+model Invoice {
+  id                   String        @id @default(uuid())
+  invoiceNumber        String        @unique // e.g. "INV-2026-0891"
+  customerId           String
+  issueDate            DateTime      @default(now())
+  dueDate              DateTime
+  subtotal             Decimal       @db.Decimal(10, 2)
+  taxAmount            Decimal       @default(0.00) @db.Decimal(10, 2)
+  discountAmount       Decimal       @default(0.00) @db.Decimal(10, 2)
+  total                Decimal       @db.Decimal(10, 2)
+  currency             String        @default("USD")
+  status               InvoiceStatus @default(UNPAID)
+  paymentMethodSummary String?       // e.g. "Visa ending in 4242"
+  pdfUrl               String?
+  paidAt               DateTime?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  customer             Customer      @relation(fields: [customerId], references: [id])
+  order                Order?
+  items                InvoiceItem[]
+  payments             PaymentTransaction[]
+
+  @@index([customerId])
+  @@index([status])
+}
+
+model InvoiceItem {
+  id          String   @id @default(uuid())
+  invoiceId   String
+  description String
+  quantity    Int      @default(1)
+  unitPrice   Decimal  @db.Decimal(10, 2)
+  amount      Decimal  @db.Decimal(10, 2)
+
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+}
+
+model PaymentTransaction {
+  id                  String          @id @default(uuid())
+  transactionRef      String          @unique // e.g. "TXN-88412"
+  customerId          String
+  invoiceId           String
+  provider            PaymentProvider @default(PAYHERE)
+  amount              Decimal         @db.Decimal(10, 2)
+  currency            String          @default("USD")
+  status              PaymentStatus   @default(PAID)
+  date                DateTime        @default(now())
+
+  // PayHere gateway identifiers
+  gatewayPaymentId    String?         // PayHere payment_id (e.g. 320025184910)
+  gatewayResponseCode String?
+  refundedAmount      Decimal?        @db.Decimal(10, 2)
+  refundReason        String?
+  refundedAt          DateTime?
+  rawPayloadJson      Json?
+
+  customer            Customer        @relation(fields: [customerId], references: [id])
+  invoice             Invoice         @relation(fields: [invoiceId], references: [id])
+
+  @@index([customerId])
+  @@index([invoiceId])
+  @@index([status])
+}
+
+model Subscription {
+  id                    String             @id @default(uuid())
+  customerId            String
+  serviceId             String
+  frequency             BillingCycle       @default(MONTHLY)
+  nextRenewalDate       DateTime
+  renewalPrice          Decimal            @db.Decimal(10, 2)
+  currency              String             @default("USD")
+  status                SubscriptionStatus @default(ACTIVE)
+  autoRenew             Boolean            @default(true)
+  gracePeriodDays       Int                @default(5)
+  failedRenewalAttempts Int                @default(0)
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  customer              Customer           @relation(fields: [customerId], references: [id])
+  service               HostingService     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([status])
+}
+
+// ----------------------------------------------------
+// 9. SUPPORT TICKETS & REAL-TIME LIVE CHAT
+// ----------------------------------------------------
+
+model SupportTicket {
+  id               String           @id @default(uuid())
+  ticketNumber     String           @unique // e.g. "TICK-4102"
+  customerId       String
+  relatedServiceId String?
+  subject          String
+  department       TicketDepartment @default(TECHNICAL_SUPPORT)
+  assignedAgentId  String?
+  priority         TicketPriority   @default(MEDIUM)
+  status           TicketStatus     @default(OPEN)
+  createdDate      DateTime         @default(now())
+  lastResponseDate DateTime         @default(now())
+
+  customer         Customer         @relation(fields: [customerId], references: [id])
+  relatedService   HostingService?  @relation(fields: [relatedServiceId], references: [id], onDelete: SetNull)
+  assignedAgent    StaffMember?     @relation(fields: [assignedAgentId], references: [id], onDelete: SetNull)
+  messages         TicketMessage[]
+
+  @@index([customerId])
+  @@index([status])
+  @@index([department])
+}
+
+model TicketMessage {
+  id             String        @id @default(uuid())
+  ticketId       String
+  senderName     String
+  senderRole     SenderRole    @default(CUSTOMER)
+  isInternalNote Boolean       @default(false) // If true: Staff-only, hidden from customer portal
+  content        String        @db.Text
+  timestamp      DateTime      @default(now())
+
+  ticket         SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+}
+
+model LiveChatSession {
+  id                  String         @id @default(uuid())
+  customerId          String
+  activeServiceDomain String?
+  assignedAgentId     String?
+  status              LiveChatStatus @default(WAITING)
+  startedAt           DateTime       @default(now())
+  unreadCount         Int            @default(0)
+
+  customer            Customer       @relation(fields: [customerId], references: [id])
+  assignedAgent       StaffMember?   @relation(fields: [assignedAgentId], references: [id], onDelete: SetNull)
+  messages            LiveChatMessage[]
+
+  @@index([customerId])
+  @@index([status])
+}
+
+model LiveChatMessage {
+  id         String          @id @default(uuid())
+  sessionId  String
+  sender     SenderRole      @default(CUSTOMER)
+  senderName String
+  text       String          @db.Text
+  timestamp  DateTime        @default(now())
+
+  session    LiveChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
+
+// ----------------------------------------------------
+// 10. DOMAINS, SYSTEM NOTIFICATIONS & AUDIT LOGS
+// ----------------------------------------------------
+
+model CustomerDomain {
+  id              String         @id @default(uuid())
+  customerId      String
+  domainName      String         @unique
+  linkedServiceId String?
+  dnsStatus       DnsStatus      @default(POINTED)
+  nameservers     String[]       @default(["ns1.serversalad.com", "ns2.serversalad.com"])
+  sslStatus       SslStatus      @default(ACTIVE_LETS_ENCRYPT)
+  sslExpiryDays   Int?           @default(90)
+  autoRenewSsl    Boolean        @default(true)
+  expiresAt       DateTime
+
+  customer        Customer       @relation(fields: [customerId], references: [id])
+  linkedService   HostingService? @relation(fields: [linkedServiceId], references: [id], onDelete: SetNull)
+
+  @@index([customerId])
+}
+
+model NotificationLog {
+  id             String              @id @default(uuid())
+  event          String
+  recipientEmail String
+  recipientName  String
+  channel        NotificationChannel @default(EMAIL)
+  status         DeliveryStatus      @default(DELIVERED)
+  subject        String
+  timestamp      DateTime            @default(now())
+  errorDetails   String?             @db.Text
+
+  @@index([status])
+}
+
+model EmailTemplate {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  subject     String
+  body        String   @db.Text
+  variables   String[]
+  lastUpdated DateTime @default(now())
+}
+
+model AuditLog {
+  id           String            @id @default(uuid())
+  timestamp    DateTime          @default(now())
+  actor        String
+  actorRole    StaffRole         @default(ADMINISTRATOR)
+  action       String
+  resourceType AuditResourceType
+  resourceId   String
+  outcome      AuditOutcome      @default(SUCCESS)
+  details      String            @db.Text
+
+  @@index([actor])
+  @@index([resourceType])
+  @@index([timestamp])
+}
+
+model PlatformSetting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  valueJson   Json
+  updatedAt   DateTime @default(now())
+}
