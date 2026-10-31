@@ -75,7 +75,7 @@ export const HostingDashboard: React.FC = () => {
   return (
     <div className="h-full flex-1 min-h-0 flex flex-col bg-[#f8f9fa] text-gray-900 overflow-hidden">
       {/* Top Subheader: Breadcrumb, Title & Single Primary Action Button */}
-      <section className="shrink-0 max-w-6xl w-full mx-auto px-4 sm:px-6 pt-3 pb-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <section className="shrink-0 w-full px-4 sm:px-6 lg:px-8 pt-3 pb-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-1.5 text-[11px] text-gray-400 font-medium mb-0.5">
             <span>Customer Portal</span>
@@ -115,7 +115,7 @@ export const HostingDashboard: React.FC = () => {
       </section>
 
       {/* The Single Section Unified Body: Fills Remaining Viewport */}
-      <main className="flex-1 min-h-0 max-w-6xl w-full mx-auto px-4 sm:px-6 pb-2 flex flex-col gap-3 overflow-hidden">
+      <main className="flex-1 min-h-0 w-full px-4 sm:px-6 lg:px-8 pb-2 flex flex-col gap-3 overflow-hidden">
         {/* Upper Part of Single Section: Hosting Overview & Metrics */}
         <HostingOverview
           plan={plan}
@@ -138,8 +138,8 @@ export const HostingDashboard: React.FC = () => {
       </main>
 
       {/* Pinned Bottom Status Bar */}
-      <footer className="shrink-0 border-t border-gray-200/80 bg-white/70 backdrop-blur-xs py-2 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto flex items-center justify-between text-[11px] text-gray-500">
+      <footer className="shrink-0 border-t border-gray-200/80 bg-white/70 backdrop-blur-xs py-2 px-4 sm:px-6 lg:px-8">
+        <div className="w-full flex items-center justify-between text-[11px] text-gray-500">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
             <span>Server Salad Cloud Infrastructure • Cluster EU-Central (London & Frankfurt)</span>

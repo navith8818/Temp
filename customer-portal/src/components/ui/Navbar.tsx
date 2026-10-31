@@ -11,16 +11,16 @@ export const Navbar: React.FC = () => {
   const { profile } = useAccount();
 
   return (
-    <header className="pt-3 px-4 sm:px-6 shrink-0 z-30 w-full">
-      <div className="max-w-6xl mx-auto">
+    <header className="pt-3 px-4 sm:px-6 lg:px-8 shrink-0 z-30 w-full">
+      <div className="w-full">
         {/* Lithos-Hero Floating Pill Navbar Style */}
-        <nav className="bg-white/95 backdrop-blur-xl border border-gray-200/80 rounded-full px-5 py-2.5 flex items-center justify-between shadow-xs">
+        <nav className="w-full bg-white/95 backdrop-blur-xl border border-gray-200/80 rounded-full px-5 py-2.5 flex items-center justify-between shadow-xs">
           {/* Brand Logo - Matching Lithos Hero */}
           <Link
             href="/"
             className="flex items-center gap-2.5 hover:opacity-90 transition-opacity focus:outline-none"
           >
-            <div className="w-7 h-7 rounded-full bg-[#fcf5f1] border border-[#e8702a]/20 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-[#fcf5f1] border border-[#e8702a]/20 flex items-center justify-center shadow-2xs">
               <svg
                 width="16"
                 height="16"
@@ -41,58 +41,33 @@ export const Navbar: React.FC = () => {
             </div>
           </Link>
 
-          {/* Center Links */}
-          <div className="hidden md:flex items-center gap-1">
-            <Link
-              href="/"
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
-                pathname === '/' || (pathname.startsWith('/hosting') && pathname !== '/hosting/new')
-                  ? 'bg-gray-100 text-gray-900 font-semibold'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-            >
-              My Hosting
-            </Link>
-            <Link
-              href="/hosting/new"
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
-                pathname === '/hosting/new'
-                  ? 'bg-gray-100 text-gray-900 font-semibold'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-            >
-              Products & Plans
-            </Link>
-            <Link
-              href="/billing"
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
-                pathname === '/billing'
-                  ? 'bg-gray-100 text-gray-900 font-semibold'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-            >
-              Billing
-            </Link>
-          </div>
-
-          {/* Right Actions */}
-          <div className="flex items-center gap-2.5">
-
+          {/* Right Actions: Notifications & User Profile */}
+          <div className="flex items-center gap-3">
             {/* Notification Bell Popover */}
             <NotificationsPopover />
 
-            {/* User Profile Avatar Link directly navigating to /profile */}
+            {/* User Profile in Header Bar */}
             <Link
               href="/profile"
-              className={`w-8 h-8 rounded-full bg-[#fcf5f1] border flex items-center justify-center text-xs font-bold text-[#e8702a] select-none cursor-pointer transition-all focus:outline-none ${
+              className={`inline-flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border transition-all cursor-pointer focus:outline-none select-none ${
                 pathname === '/profile'
-                  ? 'border-[#e8702a] ring-2 ring-[#e8702a]/30 shadow-xs'
-                  : 'border-[#e8702a]/40 hover:border-[#e8702a]'
+                  ? 'bg-[#fcf5f1] border-[#e8702a] ring-2 ring-[#e8702a]/20 shadow-xs'
+                  : 'bg-white hover:bg-gray-50 border-gray-200/80 hover:border-gray-300 shadow-2xs'
               }`}
               title={`Account Settings: ${profile.name} (${profile.email})`}
               aria-label="User Profile & Account Settings"
             >
-              {profile.initials}
+              <div className="w-7 h-7 rounded-full bg-[#fcf5f1] border border-[#e8702a]/30 flex items-center justify-center text-xs font-bold text-[#e8702a] shrink-0 shadow-2xs">
+                {profile.initials}
+              </div>
+              <div className="hidden sm:flex flex-col text-left leading-tight pr-0.5">
+                <span className="text-xs font-bold text-gray-900 truncate max-w-[120px]">
+                  {profile.name}
+                </span>
+                <span className="text-[10px] text-gray-400 truncate max-w-[120px]">
+                  {profile.email}
+                </span>
+              </div>
             </Link>
           </div>
         </nav>

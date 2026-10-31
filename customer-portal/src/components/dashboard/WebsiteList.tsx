@@ -65,6 +65,14 @@ export const WebsiteList: React.FC<WebsiteListProps> = ({
         </div>
       </div>
 
+      {/* Column Titles Bar for Desktop */}
+      <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 shrink-0">
+        <div className="col-span-4">Domain & Status</div>
+        <div className="col-span-3">Stack & Runtime</div>
+        <div className="col-span-3">Cluster Node & Disk</div>
+        <div className="col-span-2 text-right">Actions</div>
+      </div>
+
       {/* Website rows with inner scrolling or empty state */}
       {filteredWebsites.length > 0 ? (
         <div className="flex-1 min-h-0 overflow-y-auto space-y-2.5 pt-3 pr-1">

@@ -86,8 +86,8 @@ export function AdminTable<T>({
   return (
     <div className="bg-white rounded-xl border border-gray-200/90 shadow-2xs overflow-hidden">
       {/* Top Filter and Actions Bar */}
-      <div className="p-3.5 sm:p-4 border-b border-gray-200/80 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white">
-        <div className="flex flex-1 items-center gap-2.5 max-w-md">
+      <div className="p-4 sm:p-5 border-b border-gray-200/80 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white">
+        <div className="flex flex-1 items-center gap-3 max-w-lg">
           {searchFilter && (
             <div className="relative w-full">
               <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -99,7 +99,7 @@ export function AdminTable<T>({
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full bg-gray-50/80 hover:bg-gray-50 focus:bg-white border border-gray-200 rounded-lg py-1.5 pl-8 pr-3 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#e8702a] focus:border-[#e8702a] transition-all"
+                className="w-full bg-gray-50/80 hover:bg-gray-50 focus:bg-white border border-gray-200 rounded-lg py-2 pl-9 pr-3 text-xs font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#e8702a] focus:border-[#e8702a] transition-all"
               />
             </div>
           )}
@@ -117,12 +117,12 @@ export function AdminTable<T>({
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
-            <tr className="bg-gray-50/80 border-b border-gray-200/80 text-gray-500 font-semibold tracking-wider uppercase text-[11px]">
+            <tr className="bg-gray-50/90 border-b border-gray-200 text-gray-700 font-bold tracking-wider uppercase text-[11px] select-none">
               {columns.map(col => (
                 <th
                   key={col.key}
                   onClick={() => col.sortable && handleSort(col.key)}
-                  className={`py-2.5 px-4 ${col.sortable ? 'cursor-pointer hover:text-gray-800 transition-colors' : ''} ${col.className || ''}`}
+                  className={`py-3 px-5 sm:px-6 ${col.sortable ? 'cursor-pointer hover:text-gray-900 transition-colors' : ''} ${col.className || ''}`}
                 >
                   <div className="flex items-center gap-1.5">
                     <span>{col.header}</span>
@@ -136,7 +136,7 @@ export function AdminTable<T>({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 text-gray-700">
+          <tbody className="divide-y divide-gray-100 text-gray-800">
             {isLoading ? (
               <tr>
                 <td colSpan={columns.length} className="py-12 text-center text-gray-400 text-xs">
@@ -158,10 +158,10 @@ export function AdminTable<T>({
               paginatedData.map((row, idx) => (
                 <tr
                   key={keyExtractor(row)}
-                  className="hover:bg-gray-50/70 transition-colors"
+                  className="hover:bg-gray-50/90 transition-colors"
                 >
                   {columns.map(col => (
-                    <td key={col.key} className={`py-3 px-4 ${col.className || ''}`}>
+                    <td key={col.key} className={`py-3.5 px-5 sm:px-6 text-gray-800 font-normal ${col.className || ''}`}>
                       {col.render ? col.render(row, idx) : (row as any)[col.key]}
                     </td>
                   ))}
@@ -174,13 +174,13 @@ export function AdminTable<T>({
 
       {/* Pagination Footer */}
       {!isLoading && sortedData.length > 0 && (
-        <div className="p-3 border-t border-gray-200/80 bg-gray-50/40 flex items-center justify-between text-xs text-gray-500">
+        <div className="p-4 px-5 sm:px-6 border-t border-gray-200/80 bg-gray-50/60 flex items-center justify-between text-xs text-gray-600 font-medium">
           <div>
-            Showing <span className="font-medium text-gray-800">{(currentPage - 1) * pageSize + 1}</span> to{' '}
-            <span className="font-medium text-gray-800">
+            Showing <span className="font-bold text-gray-900 font-mono">{(currentPage - 1) * pageSize + 1}</span> to{' '}
+            <span className="font-bold text-gray-900 font-mono">
               {Math.min(currentPage * pageSize, sortedData.length)}
             </span>{' '}
-            of <span className="font-medium text-gray-800">{sortedData.length}</span> results
+            of <span className="font-bold text-gray-900 font-mono">{sortedData.length}</span> results
           </div>
 
           <div className="flex items-center gap-1.5">

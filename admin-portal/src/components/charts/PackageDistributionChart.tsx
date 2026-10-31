@@ -134,7 +134,7 @@ export const PackageDistributionChart: React.FC<PackageDistributionChartProps> =
             <span className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">
               Active
             </span>
-            <span className="text-2xl font-bold text-gray-900 font-mono leading-tight">
+            <span className="text-3xl font-bold text-gray-900 font-mono leading-tight">
               {totalActive}
             </span>
             <span className="text-[10px] text-gray-500 font-medium">
@@ -167,10 +167,10 @@ export const PackageDistributionChart: React.FC<PackageDistributionChartProps> =
                   style={{ backgroundColor: tier.color }}
                 />
                 <div className="min-w-0">
-                  <span className="font-semibold text-gray-900 text-xs block truncate">
+                  <span className="font-bold text-gray-900 text-xs block truncate">
                     {tier.name}
                   </span>
-                  <span className="text-[10px] text-gray-400 font-mono block">
+                  <span className="text-[11px] text-gray-500 font-medium font-mono block">
                     {tier.activeServicesCount} {tier.activeServicesCount === 1 ? 'account' : 'accounts'} • {tier.customerCount} {tier.customerCount === 1 ? 'client' : 'clients'}
                   </span>
                 </div>
@@ -178,12 +178,12 @@ export const PackageDistributionChart: React.FC<PackageDistributionChartProps> =
 
               {/* Right Column: MRR, share percentage, and growth indicator */}
               <div className="text-right shrink-0">
-                <div className="font-bold text-gray-900 font-mono text-xs">
+                <div className="font-bold text-gray-900 font-mono text-sm">
                   LKR {tier.mrr.toFixed(2)}
                   <span className="text-[10px] font-normal text-gray-400 ml-0.5">/mo</span>
                 </div>
                 <div className="flex items-center justify-end gap-1.5 text-[10px] font-mono">
-                  <span className="font-semibold text-gray-700">{tier.sharePct}%</span>
+                  <span className="font-bold text-gray-800">{tier.sharePct}%</span>
                   <span className="text-emerald-700 font-medium bg-emerald-50 px-1 py-0.2 rounded border border-emerald-200/50">
                     +{tier.newActivations} new
                   </span>
@@ -199,7 +199,7 @@ export const PackageDistributionChart: React.FC<PackageDistributionChartProps> =
         <div className="flex items-center gap-1 min-w-0 truncate">
           <DollarSign size={13} className="text-emerald-600 shrink-0" />
           <span className="truncate">
-            Platform MRR: <strong className="text-gray-900 font-semibold font-mono">LKR {summary.totalMonthlyMrr.toFixed(2)}</strong>
+            Platform MRR: <strong className="text-gray-900 font-bold font-mono text-xs">LKR {summary.totalMonthlyMrr.toFixed(2)}</strong>
           </span>
         </div>
         <span className="text-emerald-700 font-semibold font-mono text-[10px] bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60 shrink-0 ml-2">

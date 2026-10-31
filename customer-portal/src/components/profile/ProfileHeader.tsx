@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ShieldCheck, LogOut, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, LogOut, CheckCircle2, Mail, Building, Globe } from 'lucide-react';
 import { useAccount } from '@/context/AccountContext';
 import { useToast } from '@/components/ui/Toast';
 
@@ -15,9 +15,9 @@ export const ProfileHeader: React.FC = () => {
 
   return (
     <section className="shrink-0 rounded-3xl border border-gray-200/80 bg-white p-5 sm:p-6 shadow-xs">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         {/* Left: Avatar & Identity */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 shrink-0">
           <div className="relative">
             <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#fcf5f1] border-2 border-[#e8702a]/30 flex items-center justify-center text-xl sm:text-2xl font-bold text-[#e8702a] shadow-xs select-none">
               {profile.initials}
@@ -36,12 +36,59 @@ export const ProfileHeader: React.FC = () => {
                 {profile.role}
               </span>
             </div>
+            <p className="text-xs text-gray-500 mt-0.5 font-medium">Customer Portal Account</p>
+          </div>
+        </div>
+
+        {/* Middle: 3 Structured Account Metadata Columns */}
+        <div className="hidden lg:grid grid-cols-3 gap-6 flex-1 px-6 border-x border-gray-100 max-w-2xl">
+          {/* Column 1: Email Address */}
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-0.5">
+              Primary Email
+            </span>
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-900 truncate">
+              <Mail className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+              <span className="truncate">{profile.email}</span>
+            </div>
+            <div className="flex items-center gap-1 text-[11px] text-emerald-600 mt-0.5">
+              <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+              <span>Verified Customer</span>
+            </div>
+          </div>
+
+          {/* Column 2: Organization */}
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-0.5">
+              Organization
+            </span>
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-900 truncate">
+              <Building className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+              <span className="truncate">{profile.company || 'Personal Account'}</span>
+            </div>
+            <span className="text-[11px] text-gray-400 mt-0.5 block font-mono">
+              Cloud ID: SS-84920
+            </span>
+          </div>
+
+          {/* Column 3: Locale & Timezone */}
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-0.5">
+              Locale & Region
+            </span>
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-900 truncate">
+              <Globe className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+              <span className="truncate">{profile.timezone}</span>
+            </div>
+            <span className="text-[11px] text-gray-400 mt-0.5 block">
+              Language: {profile.language}
+            </span>
           </div>
         </div>
 
         {/* Right: Security Status & Sign Out */}
-        <div className="flex items-center gap-2.5 self-start sm:self-center">
-          <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/70 text-xs font-semibold text-emerald-800">
+        <div className="flex items-center gap-2.5 self-start lg:self-center shrink-0">
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/70 text-xs font-semibold text-emerald-800">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
             <span>2FA {profile.twoFactorEnabled ? 'Active' : 'Disabled'}</span>
           </div>

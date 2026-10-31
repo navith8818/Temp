@@ -13,10 +13,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Eye,
-  FileText,
   X,
 } from 'lucide-react';
-import { PaymentTransaction, Invoice } from '@/types/billing';
+import { PaymentTransaction } from '@/types/billing';
 import { billingService } from '@/data/mockBillingData';
 import { useToast } from '@/components/ui/Toast';
 
@@ -182,17 +181,25 @@ export const PaymentTransactionsList: React.FC<PaymentTransactionsListProps> = (
         </div>
       </div>
 
+      {/* Desktop Column Titles Bar */}
+      <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 shrink-0">
+        <div className="col-span-4">Transaction & Status</div>
+        <div className="col-span-3">Gateway & Reference</div>
+        <div className="col-span-2">Linked Invoice & Date</div>
+        <div className="col-span-3 text-right">Settled Amount & Verification</div>
+      </div>
+
       {/* Transaction Rows */}
       {paginatedTransactions.length > 0 ? (
         <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-gray-100 pr-1">
           {paginatedTransactions.map((txn) => (
             <div
               key={txn.id}
-              className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-gray-50/70 rounded-2xl px-2.5 transition-colors"
+              className="py-3.5 px-3 sm:px-4 grid grid-cols-1 md:grid-cols-12 gap-3.5 md:gap-4 items-center hover:bg-gray-50/70 rounded-2xl transition-colors"
             >
-              {/* Left Column: Txn ID, Gateway Ref, Invoice */}
-              <div className="flex items-start gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 shrink-0 mt-0.5">
+              {/* Col 1-4: Txn ID, Badge, Payment Method */}
+              <div className="md:col-span-4 flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 shrink-0">
                   <CreditCard className="w-4 h-4 text-[#e8702a]" />
                 </div>
                 <div className="min-w-0">
@@ -202,28 +209,43 @@ export const PaymentTransactionsList: React.FC<PaymentTransactionsListProps> = (
                     </span>
                     {renderStatusBadge(txn.status)}
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-gray-600 mt-0.5 flex-wrap">
-                    <span className="font-semibold text-gray-800">{txn.gateway}</span>
-                    <span className="font-mono text-[11px] text-gray-400">Ref: {txn.gatewayRefId}</span>
-                    <span>•</span>
-                    <button
-                      type="button"
-                      onClick={() => onViewInvoice(txn.invoiceNumber)}
-                      className="font-mono text-[#e8702a] hover:underline cursor-pointer flex items-center gap-0.5"
-                    >
-                      <span>{txn.invoiceNumber}</span>
-                      <ExternalLink className="w-2.5 h-2.5" />
-                    </button>
-                  </div>
-                  <div className="text-[11px] text-gray-400 mt-0.5">
-                    {txn.paymentMethod} • {txn.date}
+                  <div className="text-[11px] text-gray-500 mt-0.5 truncate">
+                    {txn.paymentMethod}
                   </div>
                 </div>
               </div>
 
-              {/* Right Column: Amount & Action Buttons */}
-              <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 self-end sm:self-center">
-                <div className="text-right">
+              {/* Col 5-7: Gateway & Reference Token */}
+              <div className="md:col-span-3 min-w-0 text-xs">
+                <div className="flex items-center gap-1.5 font-semibold text-gray-800">
+                  <span>{txn.gateway}</span>
+                  <span className="text-[10px] font-normal text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded-full border border-emerald-200">
+                    HMAC Verified
+                  </span>
+                </div>
+                <div className="text-[11px] text-gray-400 font-mono mt-0.5 truncate">
+                  Ref: {txn.gatewayRefId}
+                </div>
+              </div>
+
+              {/* Col 8-9: Linked Invoice & Date */}
+              <div className="md:col-span-2 min-w-0 text-xs space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => onViewInvoice(txn.invoiceNumber)}
+                  className="font-mono text-[#e8702a] font-semibold hover:underline cursor-pointer flex items-center gap-1 text-[11px]"
+                >
+                  <span>{txn.invoiceNumber}</span>
+                  <ExternalLink className="w-2.5 h-2.5" />
+                </button>
+                <div className="text-[11px] text-gray-400 truncate">
+                  {txn.date}
+                </div>
+              </div>
+
+              {/* Col 10-12: Amount & Action Buttons */}
+              <div className="md:col-span-3 flex items-center justify-between md:justify-end gap-3 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-gray-100">
+                <div className="text-left md:text-right">
                   <div className="font-mono text-sm font-bold text-gray-900">
                     ${txn.amount.toFixed(2)} USD
                   </div>

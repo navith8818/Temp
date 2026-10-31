@@ -60,7 +60,8 @@ export const PersonalDetailsSection: React.FC = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="pt-5 space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* 3 Balanced Columns for wide layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {/* Full Name */}
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1.5">

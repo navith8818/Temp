@@ -9,6 +9,8 @@ import {
   Check,
   RefreshCw,
   SlidersHorizontal,
+  Calendar,
+  Cpu,
 } from 'lucide-react';
 import { HostingPlan } from '@/types/hosting';
 import { StatusBadge } from '@/components/ui/StatusBadge';
@@ -50,9 +52,10 @@ export const HostingOverview: React.FC<HostingOverviewProps> = ({
 
   return (
     <section className="shrink-0 rounded-3xl border border-gray-200/80 bg-white p-5 sm:p-6 shadow-xs">
-      {/* Top Header Row */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4">
-        <div className="flex items-start sm:items-center gap-3.5">
+      {/* Top Header Row with Structured Middle Columns */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4">
+        {/* Left: Server Identity */}
+        <div className="flex items-start sm:items-center gap-3.5 shrink-0">
           <div className="w-10 h-10 rounded-2xl bg-[#fcf5f1] border border-[#e8702a]/20 flex items-center justify-center text-[#e8702a] shrink-0 shadow-xs">
             <Server className="w-5 h-5 stroke-[2]" />
           </div>
@@ -87,8 +90,37 @@ export const HostingOverview: React.FC<HostingOverviewProps> = ({
           </div>
         </div>
 
-        {/* Action Buttons - Lithos-Hero Pill Style */}
-        <div className="flex items-center gap-2.5 self-start sm:self-center">
+        {/* Middle: Server Cluster & Renewal Columns */}
+        <div className="hidden lg:grid grid-cols-2 gap-6 px-6 border-x border-gray-100 flex-1 max-w-xl">
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-0.5">
+              Cluster Host & Stack
+            </span>
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-800">
+              <Cpu className="w-3.5 h-3.5 text-gray-500 shrink-0" />
+              <span className="font-mono truncate">{plan.serverHost}</span>
+            </div>
+            <div className="text-[11px] text-gray-500 mt-0.5 truncate">
+              {plan.webServer} • PHP {plan.phpVersion}
+            </div>
+          </div>
+
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-0.5">
+              Renewal Schedule
+            </span>
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-800">
+              <Calendar className="w-3.5 h-3.5 text-[#e8702a] shrink-0" />
+              <span>{plan.renewalDate}</span>
+            </div>
+            <div className="text-[11px] text-gray-500 mt-0.5">
+              ${plan.renewalPrice.toFixed(2)} USD / {plan.billingCycle === 'annual' ? 'year' : 'month'} • {plan.autoRenew ? 'Auto-Pay Active' : 'Manual Pay'}
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Action Buttons - Lithos-Hero Pill Style */}
+        <div className="flex items-center gap-2.5 self-start lg:self-center shrink-0">
           {/* Manage Button - Triggers Left Side Drawer */}
           <button
             type="button"
@@ -187,7 +219,7 @@ export const HostingOverview: React.FC<HostingOverviewProps> = ({
         </div>
       </div>
 
-      {/* Metrics Row */}
+      {/* Metrics Row: 5 Full-Width Columns */}
       <HostingMetrics plan={plan} />
     </section>
   );

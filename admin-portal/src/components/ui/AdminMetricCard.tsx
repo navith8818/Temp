@@ -24,14 +24,14 @@ export const AdminMetricCard: React.FC<AdminMetricCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`bg-white rounded-xl border border-gray-200/90 p-4 transition-all relative overflow-hidden group ${
+      className={`bg-white rounded-2xl border border-gray-200/90 p-4 sm:p-5 transition-all relative overflow-hidden group ${
         onClick
           ? 'cursor-pointer hover:border-gray-300 hover:shadow-xs'
           : ''
       }`}
     >
       <div className="flex items-center justify-between text-gray-500 mb-2">
-        <span className="text-xs font-medium tracking-tight text-gray-500">{label}</span>
+        <span className="text-xs font-semibold tracking-tight text-gray-600">{label}</span>
         <div className="flex items-center gap-1.5">
           {icon && <span className="text-gray-400 group-hover:text-gray-600 transition-colors">{icon}</span>}
           {onClick && (
@@ -41,7 +41,7 @@ export const AdminMetricCard: React.FC<AdminMetricCardProps> = ({
       </div>
 
       <div className="flex items-baseline justify-between gap-2">
-        <div className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 font-sans">
+        <div className="text-2xl lg:text-3xl font-bold tracking-tight text-gray-900 font-sans">
           {value}
         </div>
         {badge && (
@@ -62,7 +62,7 @@ export const AdminMetricCard: React.FC<AdminMetricCardProps> = ({
       </div>
 
       {subtext && (
-        <p className="text-[11px] text-gray-400 mt-1 truncate">{subtext}</p>
+        <p className="text-[11px] font-medium text-gray-500 mt-1.5 truncate">{subtext}</p>
       )}
     </div>
   );

@@ -9,7 +9,6 @@ import {
   Clock,
   AlertCircle,
   Search,
-  ArrowUpDown,
   Mail,
   CreditCard,
   Ban,
@@ -78,7 +77,6 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({
       .sort((a, b) => {
         if (sortBy === 'amount_desc') return b.total - a.total;
         if (sortBy === 'amount_asc') return a.total - b.total;
-        // Date sort fallback by id/date
         if (sortBy === 'date_asc') return a.date.localeCompare(b.date);
         return b.date.localeCompare(a.date);
       });
@@ -234,6 +232,14 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({
         </div>
       </div>
 
+      {/* Desktop Column Titles Bar */}
+      <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 shrink-0">
+        <div className="col-span-4">Invoice & Status</div>
+        <div className="col-span-3">Description & Line Items</div>
+        <div className="col-span-2">Billing Dates</div>
+        <div className="col-span-3 text-right">Amount & Quick Actions</div>
+      </div>
+
       {/* Invoice Rows List */}
       {paginatedInvoices.length > 0 ? (
         <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-gray-100 pr-1">
@@ -244,11 +250,11 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({
             return (
               <div
                 key={inv.id}
-                className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-gray-50/70 rounded-2xl px-2.5 transition-colors"
+                className="py-3.5 px-3 sm:px-4 grid grid-cols-1 md:grid-cols-12 gap-3.5 md:gap-4 items-center hover:bg-gray-50/70 rounded-2xl transition-colors"
               >
-                {/* Left: Invoice Number, Plan Description, Dates */}
-                <div className="flex items-start gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 shrink-0 mt-0.5">
+                {/* Col 1-4: Invoice Number, Badge, Customer */}
+                <div className="md:col-span-4 flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 shrink-0">
                     <FileText className="w-4 h-4 text-[#e8702a]" />
                   </div>
                   <div className="min-w-0">
@@ -258,26 +264,35 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({
                       </span>
                       {renderStatusBadge(inv.status)}
                     </div>
-                    <p className="text-xs text-gray-700 font-medium truncate mt-0.5">
-                      {inv.description || inv.items[0]?.description}
+                    <p className="text-[11px] text-gray-500 font-medium truncate mt-0.5">
+                      {inv.customerName || 'Sarah Jenkins'}
                     </p>
-                    <div className="flex items-center gap-2 text-[11px] text-gray-500 mt-0.5 flex-wrap">
-                      <span>Issued {inv.date}</span>
-                      <span>•</span>
-                      <span>Due: <strong className="text-gray-700">{inv.dueDate}</strong></span>
-                      {inv.paymentMethodSummary && (
-                        <>
-                          <span>•</span>
-                          <span className="text-gray-400 truncate max-w-[150px]">{inv.paymentMethodSummary}</span>
-                        </>
-                      )}
-                    </div>
                   </div>
                 </div>
 
-                {/* Right: Amounts and Quick Actions */}
-                <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 self-end sm:self-center">
-                  <div className="text-right">
+                {/* Col 5-7: Description & Plan */}
+                <div className="md:col-span-3 min-w-0 text-xs">
+                  <p className="font-medium text-gray-900 truncate">
+                    {inv.description || inv.items[0]?.description}
+                  </p>
+                  <p className="text-[11px] text-gray-500 mt-0.5 truncate">
+                    {inv.items.length} item(s) • {inv.paymentMethodSummary || 'Online Settlement'}
+                  </p>
+                </div>
+
+                {/* Col 8-9: Billing Dates */}
+                <div className="md:col-span-2 min-w-0 text-xs space-y-0.5">
+                  <div className="text-[11px] text-gray-500">
+                    Issued: <span className="text-gray-700">{inv.date}</span>
+                  </div>
+                  <div className="text-[11px] text-gray-500">
+                    Due: <strong className={hasBalance ? 'text-[#e8702a]' : 'text-gray-800'}>{inv.dueDate}</strong>
+                  </div>
+                </div>
+
+                {/* Col 10-12: Amounts & Quick Actions */}
+                <div className="md:col-span-3 flex items-center justify-between md:justify-end gap-3 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-gray-100">
+                  <div className="text-left md:text-right">
                     <div className="font-mono text-sm font-bold text-gray-900">
                       ${inv.total.toFixed(2)} USD
                     </div>
@@ -302,7 +317,7 @@ export const InvoicesList: React.FC<InvoicesListProps> = ({
                         className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#e8702a] hover:bg-[#d2611f] text-white shadow-2xs transition-all cursor-pointer whitespace-nowrap"
                       >
                         <CreditCard className="w-3.5 h-3.5" />
-                        <span>Pay Now</span>
+                        <span>Pay</span>
                       </button>
                     )}
 

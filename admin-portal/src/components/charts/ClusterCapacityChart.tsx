@@ -120,7 +120,7 @@ export const ClusterCapacityChart: React.FC<ClusterCapacityChartProps> = ({
               {/* Row Header: Node Name, Hostname, Provider, Location, Status & Allocation Toggle */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-bold text-gray-900 text-sm group-hover:text-[#e8702a] transition-colors">
+                  <span className="font-bold text-gray-900 text-base group-hover:text-[#e8702a] transition-colors">
                     {node.name}
                   </span>
 
@@ -194,7 +194,7 @@ export const ClusterCapacityChart: React.FC<ClusterCapacityChartProps> = ({
 
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[11px] text-gray-600 font-medium">
-                    Account Density: <strong className="text-gray-900 font-mono font-semibold">{node.utilizationPct}%</strong> ({node.accountsCount}/{node.accountsLimit} accounts)
+                    Account Density: <strong className="text-gray-900 font-mono font-bold text-xs">{node.utilizationPct}%</strong> ({node.accountsCount}/{node.accountsLimit} accounts)
                     <span className="text-gray-300 mx-1.5">•</span>
                     {node.accountsAvailable > 0 ? (
                       <span className="text-emerald-700 font-semibold font-mono">+{node.accountsAvailable} free slots</span>
@@ -237,7 +237,7 @@ export const ClusterCapacityChart: React.FC<ClusterCapacityChartProps> = ({
                       <span className="font-semibold text-gray-700 text-[11px]">CPU Load</span>
                     </div>
                     <div className="text-right font-mono">
-                      <span className="font-bold text-gray-900 text-xs">{node.cpuLoadPct}%</span>
+                      <span className="font-bold text-gray-900 text-sm font-mono">{node.cpuLoadPct}%</span>
                       <span className="text-[10px] text-gray-400 ml-1">({node.cpuCores}c)</span>
                     </div>
                   </div>
@@ -263,7 +263,7 @@ export const ClusterCapacityChart: React.FC<ClusterCapacityChartProps> = ({
                       <span className="font-semibold text-gray-700 text-[11px]">RAM Usage</span>
                     </div>
                     <div className="text-right font-mono">
-                      <span className="font-bold text-gray-900 text-xs">{node.ramUsagePct}%</span>
+                      <span className="font-bold text-gray-900 text-sm font-mono">{node.ramUsagePct}%</span>
                       <span className="text-[10px] text-gray-400 ml-1">({node.ramUsageGb}/{node.ramTotalGb}GB)</span>
                     </div>
                   </div>
@@ -289,7 +289,7 @@ export const ClusterCapacityChart: React.FC<ClusterCapacityChartProps> = ({
                       <span className="font-semibold text-gray-700 text-[11px]">NVMe SSD</span>
                     </div>
                     <div className="text-right font-mono">
-                      <span className="font-bold text-gray-900 text-xs">{node.storageUsagePct}%</span>
+                      <span className="font-bold text-gray-900 text-sm font-mono">{node.storageUsagePct}%</span>
                       <span className="text-[10px] text-gray-400 ml-1">
                         ({(node.storageUsageGb / 1000).toFixed(1)}/{(node.storageTotalGb / 1000).toFixed(1)}TB)
                       </span>

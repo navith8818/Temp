@@ -95,7 +95,7 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Primary Metrics Grid (8 essential metrics) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 2xl:grid-cols-8 gap-4">
         <AdminMetricCard
           label="Total Customers"
           value={totalCustomers}
@@ -255,17 +255,17 @@ export const DashboardPage: React.FC = () => {
                 >
                   <div className="space-y-0.5 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-gray-900">{order.orderNumber}</span>
-                      <span className="text-gray-400">&bull;</span>
-                      <span className="text-gray-600 truncate">{order.customerName}</span>
+                      <span className="font-bold text-gray-900">{order.orderNumber}</span>
+                      <span className="text-gray-300">&bull;</span>
+                      <span className="font-medium text-gray-700 truncate">{order.customerName}</span>
                     </div>
-                    <div className="text-[11px] text-gray-400">
-                      {order.items[0]?.productName} &bull; {order.items[0]?.domain}
+                    <div className="text-[11px] text-gray-500 font-medium">
+                      {order.items[0]?.productName} &bull; <span className="font-mono text-gray-600">{order.items[0]?.domain}</span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 shrink-0">
-                    <span className="font-semibold text-gray-900">LKR {order.total.toFixed(2)}</span>
+                    <span className="font-bold font-mono text-gray-900 text-sm">LKR {order.total.toFixed(2)}</span>
                     <AdminBadge
                       variant={
                         order.orderStatus === 'COMPLETED'
@@ -309,17 +309,17 @@ export const DashboardPage: React.FC = () => {
                 >
                   <div className="space-y-0.5 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-gray-900">{payment.customerName}</span>
-                      <span className="text-gray-400">&bull;</span>
-                      <span className="text-gray-500">{payment.provider}</span>
+                      <span className="font-bold text-gray-900">{payment.customerName}</span>
+                      <span className="text-gray-300">&bull;</span>
+                      <span className="font-semibold text-gray-700">{payment.provider}</span>
                     </div>
-                    <div className="text-[11px] text-gray-400 truncate">
-                      Ref: {payment.transactionRef} &bull; {payment.invoiceNumber}
+                    <div className="text-[11px] text-gray-500 truncate">
+                      Ref: <span className="font-mono">{payment.transactionRef}</span> &bull; <span className="font-mono font-medium">{payment.invoiceNumber}</span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 shrink-0">
-                    <span className="font-semibold text-gray-900">LKR {payment.amount.toFixed(2)}</span>
+                    <span className="font-bold font-mono text-gray-900 text-sm">LKR {payment.amount.toFixed(2)}</span>
                     <AdminBadge
                       variant={
                         payment.status === 'SUCCESS'

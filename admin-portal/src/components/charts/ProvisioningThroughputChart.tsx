@@ -153,17 +153,17 @@ export const ProvisioningThroughputChart: React.FC<ProvisioningThroughputChartPr
       {/* Numerical Summary Headline */}
       <div className="pt-4 pb-2 flex items-baseline justify-between text-xs">
         <div className="flex items-baseline gap-3">
-          <span className="text-2xl font-bold tracking-tight text-gray-900 font-sans">
+          <span className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 font-sans">
             {summary.successRatePct}%
           </span>
-          <span className="text-emerald-700 font-semibold text-xs bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/60">
+          <span className="text-emerald-800 font-bold text-xs bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200/70">
             {summary.succeededJobs} / {summary.totalJobs} Succeeded
           </span>
         </div>
 
         <div className="flex items-center gap-1 text-gray-500 font-mono text-[11px]">
           <Clock size={12} className="text-gray-400" />
-          <span>Median Speed: <strong className="text-gray-800 font-semibold">{summary.medianDurationSec}s</strong></span>
+          <span>Median Speed: <strong className="text-gray-900 font-bold font-mono">{summary.medianDurationSec}s</strong></span>
         </div>
       </div>
 

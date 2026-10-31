@@ -35,7 +35,7 @@ export default function NewHostingPage() {
 
   return (
     <div className="h-full overflow-y-auto bg-[#f8f9fa] text-gray-900">
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
+      <main className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
         {/* Back Link & Header with Increased Space */}
         <div>
           <Link

@@ -4,16 +4,12 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import {
   Server,
-  Calendar,
   CheckCircle2,
   Clock,
   AlertCircle,
   Ban,
-  ArrowRight,
-  RefreshCw,
-  ExternalLink,
   X,
-  Layers,
+  Cpu,
 } from 'lucide-react';
 import { Subscription } from '@/types/billing';
 import { billingService } from '@/data/mockBillingData';
@@ -127,16 +123,24 @@ export const SubscriptionsList: React.FC<SubscriptionsListProps> = ({
         </Link>
       </div>
 
+      {/* Desktop Column Titles Bar */}
+      <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 shrink-0">
+        <div className="col-span-4">Service & Subscription</div>
+        <div className="col-span-3">Tier & Host Architecture</div>
+        <div className="col-span-2">Renewal Schedule</div>
+        <div className="col-span-3 text-right">Recurring Price & Controls</div>
+      </div>
+
       {/* Subscription List */}
-      <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-gray-100 pr-1 pt-1">
+      <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-gray-100 pr-1">
         {subscriptions.map((sub) => (
           <div
             key={sub.id}
-            className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-gray-50/70 rounded-2xl px-2.5 transition-colors"
+            className="py-3.5 px-3 sm:px-4 grid grid-cols-1 md:grid-cols-12 gap-3.5 md:gap-4 items-center hover:bg-gray-50/70 rounded-2xl transition-colors"
           >
-            {/* Left Column: Service Details */}
-            <div className="flex items-start gap-3 min-w-0">
-              <div className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 shrink-0 mt-0.5">
+            {/* Col 1-4: Service Name, Badge, Subscription ID */}
+            <div className="md:col-span-4 flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 shrink-0">
                 <Server className="w-4 h-4 text-[#e8702a]" />
               </div>
               <div className="min-w-0">
@@ -145,26 +149,37 @@ export const SubscriptionsList: React.FC<SubscriptionsListProps> = ({
                     {sub.serviceName}
                   </span>
                   {renderStatusBadge(sub.status)}
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-mono">
-                    {sub.subscriptionId}
-                  </span>
                 </div>
-                <p className="text-xs text-gray-600 mt-0.5 truncate">{sub.package}</p>
-                <div className="flex items-center gap-2 text-[11px] text-gray-400 mt-0.5 flex-wrap">
-                  <span className="capitalize font-medium text-gray-700">
-                    {sub.billingCycle} cycle
-                  </span>
-                  <span>•</span>
-                  <span>Started {sub.startDate}</span>
-                  <span>•</span>
-                  <span>Next: <strong className="text-gray-800">{sub.nextBillingDate}</strong></span>
+                <div className="text-[11px] font-mono text-gray-500 mt-0.5">
+                  ID: {sub.subscriptionId}
                 </div>
               </div>
             </div>
 
-            {/* Right Column: Pricing & Controls */}
-            <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 self-end sm:self-center">
-              <div className="text-right">
+            {/* Col 5-7: Specification & Host Cluster */}
+            <div className="md:col-span-3 min-w-0 text-xs">
+              <div className="font-semibold text-gray-900 truncate">
+                {sub.package}
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-gray-500 mt-0.5">
+                <Cpu className="w-3 h-3 text-gray-400 shrink-0" />
+                <span className="font-mono text-gray-500 truncate">cp1.serversalad.cloud</span>
+              </div>
+            </div>
+
+            {/* Col 8-9: Cycle & Next Charge */}
+            <div className="md:col-span-2 min-w-0 text-xs space-y-0.5">
+              <div className="capitalize font-medium text-gray-700">
+                {sub.billingCycle} Cycle
+              </div>
+              <div className="text-[11px] text-gray-500">
+                Next: <strong className="text-gray-800">{sub.nextBillingDate}</strong>
+              </div>
+            </div>
+
+            {/* Col 10-12: Pricing & Controls */}
+            <div className="md:col-span-3 flex items-center justify-between md:justify-end gap-3 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-gray-100">
+              <div className="text-left md:text-right">
                 <div className="font-mono text-sm font-bold text-gray-900">
                   ${sub.amount.toFixed(2)} USD
                 </div>
@@ -186,7 +201,7 @@ export const SubscriptionsList: React.FC<SubscriptionsListProps> = ({
                     }`}
                     title="Toggle auto-renewal charging"
                   >
-                    {sub.autoRenew ? 'Auto-Renew: ON' : 'Auto-Renew: OFF'}
+                    {sub.autoRenew ? 'Auto-Pay: ON' : 'Auto-Pay: OFF'}
                   </button>
                 )}
 

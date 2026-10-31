@@ -7,13 +7,11 @@ import {
   Server,
   Zap,
   Receipt,
-  User,
-  ShieldCheck,
+  Activity,
   ChevronRight,
-  Sparkles,
+  ShieldCheck,
+  HelpCircle,
 } from 'lucide-react';
-import { useAccount } from '@/context/AccountContext';
-import { NotificationsPopover } from '@/components/navigation/NotificationsPopover';
 
 interface NavItem {
   href: string;
@@ -44,16 +42,15 @@ const NAV_ITEMS: NavItem[] = [
     icon: Receipt,
   },
   {
-    href: '/profile',
-    label: 'Account & Security',
-    subtitle: '2FA & Preferences',
-    icon: User,
+    href: '/usage',
+    label: 'Hosting Usage',
+    subtitle: 'Disk, Bandwidth & RAM',
+    icon: Activity,
   },
 ];
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
-  const { profile } = useAccount();
 
   const isItemActive = (item: NavItem) => {
     if (item.matchExact) {
@@ -169,14 +166,14 @@ export const Sidebar: React.FC = () => {
         {/* Space for Expansion */}
         <div className="flex-1 w-full min-h-[30px]" />
 
-        {/* Bottom Section: Cluster Health & User Profile Summary */}
+        {/* Bottom Section: Cluster Health Status */}
         <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
           {/* Cluster Status Indicator */}
-          <div className="flex items-center h-9 px-2 rounded-xl bg-gray-50/80 text-gray-500 overflow-hidden">
+          <div className="flex items-center h-10 px-2 rounded-2xl bg-gray-50/80 text-gray-500 overflow-hidden">
             <div className="w-8 flex items-center justify-center shrink-0">
-              <span className="relative flex h-2 w-2">
+              <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
               </span>
             </div>
             <div className="ml-2.5 flex flex-col opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap overflow-hidden">
@@ -184,25 +181,6 @@ export const Sidebar: React.FC = () => {
               <span className="text-[9px] text-emerald-600 font-medium">99.99% Operational</span>
             </div>
           </div>
-
-          {/* User Profile Snippet */}
-          <Link
-            href="/profile"
-            className="flex items-center h-11 px-2 rounded-2xl hover:bg-gray-50 transition-colors focus:outline-none overflow-hidden"
-            title={`Account Settings: ${profile.name}`}
-          >
-            <div className="w-8 h-8 rounded-full bg-[#fcf5f1] border border-[#e8702a]/30 flex items-center justify-center text-xs font-bold text-[#e8702a] shrink-0 shadow-2xs">
-              {profile.initials}
-            </div>
-            <div className="ml-2.5 flex flex-col opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap overflow-hidden flex-1">
-              <span className="text-xs font-bold text-gray-900 truncate">
-                {profile.name}
-              </span>
-              <span className="text-[10px] text-gray-400 truncate">
-                {profile.email}
-              </span>
-            </div>
-          </Link>
         </div>
       </div>
     </aside>

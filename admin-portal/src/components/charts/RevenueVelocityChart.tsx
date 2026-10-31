@@ -181,7 +181,7 @@ export const RevenueVelocityChart: React.FC<RevenueVelocityChartProps> = ({
       <div className="pt-4 pb-2 flex flex-col sm:flex-row sm:items-baseline justify-between gap-3">
         <div>
           <div className="flex items-baseline gap-2.5">
-            <span className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 font-sans">
+            <span className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 font-sans">
               {metric === 'REVENUE'
                 ? `LKR ${summary.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                 : `${summary.totalOrders} Orders`}
@@ -199,7 +199,7 @@ export const RevenueVelocityChart: React.FC<RevenueVelocityChartProps> = ({
             </span>
             <span className="text-gray-300">•</span>
             <span className="font-medium text-gray-600">
-              AOV: <span className="font-semibold text-gray-900">LKR {summary.averageOrderValue.toFixed(2)}</span>
+              AOV: <span className="font-bold font-mono text-gray-900">LKR {summary.averageOrderValue.toFixed(2)}</span>
             </span>
           </div>
         </div>
@@ -353,7 +353,8 @@ export const RevenueVelocityChart: React.FC<RevenueVelocityChartProps> = ({
           <div
             className="absolute top-2 pointer-events-none transition-all duration-150 z-20"
             style={{
-              left: `${Math.min(Math.max(activeCoord.x - 100, 10), width - 210)}px`,
+              left: `${Math.min(Math.max((activeCoord.x / width) * 100, 15), 85)}%`,
+              transform: 'translateX(-50%)',
             }}
           >
             <div className="bg-gray-900/95 text-white p-2.5 rounded-xl shadow-xl text-xs space-y-1.5 backdrop-blur-xs border border-gray-700/60 min-w-[190px]">
