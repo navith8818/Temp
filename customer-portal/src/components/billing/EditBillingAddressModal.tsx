@@ -117,7 +117,7 @@ export const EditBillingAddressModal: React.FC<EditBillingAddressModalProps> = (
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label htmlFor="billing-email" className="block font-bold text-gray-700 mb-1">
                 Receipt Email <span className="text-[#e8702a]">*</span>
@@ -133,8 +133,22 @@ export const EditBillingAddressModal: React.FC<EditBillingAddressModalProps> = (
             </div>
 
             <div>
+              <label htmlFor="billing-phone" className="block font-bold text-gray-700 mb-1">
+                Phone Number
+              </label>
+              <input
+                id="billing-phone"
+                type="tel"
+                value={formData.phone || ''}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder="+1 (555) 000-0000"
+                className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 font-mono focus:outline-none focus:bg-white focus:border-[#e8702a]"
+              />
+            </div>
+
+            <div>
               <label htmlFor="vat-id" className="block font-bold text-gray-700 mb-1">
-                VAT / Tax ID (Optional)
+                VAT / Tax ID
               </label>
               <input
                 id="vat-id"

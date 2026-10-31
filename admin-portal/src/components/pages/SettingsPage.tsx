@@ -121,6 +121,7 @@ export const SettingsPage: React.FC = () => {
                 onChange={e => setCurrency(e.target.value)}
                 className="w-full bg-white border border-gray-200 rounded-lg p-2 text-xs text-gray-800"
               >
+                <option value="LKR">LKR (Rs / LKR)</option>
                 <option value="USD">USD ($)</option>
                 <option value="EUR">EUR (€)</option>
                 <option value="GBP">GBP (£)</option>

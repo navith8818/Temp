@@ -98,9 +98,9 @@ export const InvoicesPage: React.FC = () => {
       sortable: true,
       render: inv => (
         <div>
-          <div className="font-bold text-gray-900">${inv.total.toFixed(2)}</div>
+          <div className="font-bold text-gray-900">LKR {inv.total.toFixed(2)}</div>
           {inv.discountAmount > 0 && (
-            <div className="text-[10px] text-emerald-600 font-medium">-${inv.discountAmount.toFixed(2)} credit</div>
+            <div className="text-[10px] text-emerald-600 font-medium">-LKR {inv.discountAmount.toFixed(2)} credit</div>
           )}
         </div>
       ),
@@ -295,8 +295,8 @@ export const InvoicesPage: React.FC = () => {
                     <tr key={idx}>
                       <td className="p-3 font-medium text-gray-900">{item.description}</td>
                       <td className="p-3 text-center text-gray-600">{item.quantity}</td>
-                      <td className="p-3 text-right text-gray-600">${item.unitPrice.toFixed(2)}</td>
-                      <td className="p-3 text-right font-semibold text-gray-900">${item.amount.toFixed(2)}</td>
+                      <td className="p-3 text-right text-gray-600">LKR {item.unitPrice.toFixed(2)}</td>
+                      <td className="p-3 text-right font-semibold text-gray-900">LKR {item.amount.toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -308,17 +308,17 @@ export const InvoicesPage: React.FC = () => {
               <div className="w-56 space-y-1.5 text-xs text-right">
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal:</span>
-                  <span>${selectedInvoice.subtotal.toFixed(2)}</span>
+                  <span>LKR {selectedInvoice.subtotal.toFixed(2)}</span>
                 </div>
                 {selectedInvoice.discountAmount > 0 && (
                   <div className="flex justify-between text-emerald-600 font-medium">
                     <span>Credit / Discount:</span>
-                    <span>-${selectedInvoice.discountAmount.toFixed(2)}</span>
+                    <span>-LKR {selectedInvoice.discountAmount.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-sm font-bold text-gray-900 border-t border-gray-200 pt-1.5">
                   <span>Total Amount:</span>
-                  <span>${selectedInvoice.total.toFixed(2)} {selectedInvoice.currency}</span>
+                  <span>LKR {selectedInvoice.total.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -346,7 +346,7 @@ export const InvoicesPage: React.FC = () => {
       >
         <div className="space-y-3">
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Credit Amount ($ USD)</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Credit Amount (LKR)</label>
             <input
               type="number"
               step="0.01"
@@ -422,7 +422,7 @@ export const InvoicesPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Amount ($ USD)</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Amount (LKR)</label>
             <input
               type="number"
               step="0.01"

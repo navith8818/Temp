@@ -21,6 +21,7 @@ interface AccountContextType {
   markAllNotificationsAsRead: () => void;
   deleteNotification: (id: string) => void;
   clearAllNotifications: () => void;
+  addNotification: (item: Omit<NotificationItem, 'id'>) => void;
 }
 
 const AccountContext = createContext<AccountContextType | undefined>(undefined);
@@ -141,6 +142,14 @@ export const AccountProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setNotifications([]);
   };
 
+  const addNotification = (item: Omit<NotificationItem, 'id'>) => {
+    const newItem: NotificationItem = {
+      ...item,
+      id: `notif_${Date.now()}_${Math.random()}`,
+    };
+    setNotifications((prev) => [newItem, ...prev]);
+  };
+
   return (
     <AccountContext.Provider
       value={{
@@ -160,6 +169,7 @@ export const AccountProvider: React.FC<{ children: React.ReactNode }> = ({ child
         markAllNotificationsAsRead,
         deleteNotification,
         clearAllNotifications,
+        addNotification,
       }}
     >
       {children}

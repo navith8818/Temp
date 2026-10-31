@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { useAdminData } from '../../context/AdminDataContext';
 import type { StaffRole } from '../../types';
 import {
-  Menu,
   RotateCcw,
   ExternalLink,
   ChevronDown,
@@ -14,10 +13,10 @@ import {
 } from 'lucide-react';
 
 interface AdminTopBarProps {
-  onToggleDrawer: () => void;
+  onToggleDrawer?: () => void;
 }
 
-export const AdminTopBar: React.FC<AdminTopBarProps> = ({ onToggleDrawer }) => {
+export const AdminTopBar: React.FC<AdminTopBarProps> = () => {
   const { currentRole, setCurrentRole, resetDemoData, servers } = useAdminData();
   const pathname = usePathname();
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
@@ -43,16 +42,7 @@ export const AdminTopBar: React.FC<AdminTopBarProps> = ({ onToggleDrawer }) => {
         
         {/* Left: Menu Trigger, Brand & Breadcrumbs */}
         <div className="flex items-center gap-3 sm:gap-4">
-          {/* Menu Button Opening Hidden Drawer */}
-          <button
-            onClick={onToggleDrawer}
-            className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-gray-200 bg-gray-50/70 hover:bg-gray-100 text-gray-700 hover:text-gray-900 transition-colors text-xs font-semibold cursor-pointer select-none"
-            title="Open navigation menu (or press Esc to dismiss)"
-            aria-label="Open navigation drawer"
-          >
-            <Menu className="w-4 h-4 text-gray-600" />
-            <span className="hidden sm:inline">Menu</span>
-          </button>
+
 
           {/* Brand Mark */}
           <Link

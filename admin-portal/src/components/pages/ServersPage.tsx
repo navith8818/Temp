@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAdminData } from '@/context/AdminDataContext';
 import type { HostingServer, ServerProvider, ServerType } from '@/types';
 import { AdminTable } from '@/components/ui/AdminTable';
@@ -61,6 +61,19 @@ export const ServersPage: React.FC = () => {
   const [isTestingConnectionInModal, setIsTestingConnectionInModal] = useState(false);
 
   const isRestricted = currentRole === 'SUPPORT_AGENT';
+
+  // Auto-open server inspector if id provided in URL query
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const serverId = params.get('id');
+      if (serverId) {
+        const found = servers.find(s => s.id === serverId);
+        if (found) setSelectedServer(found);
+      }
+    }
+  }, [servers]);
+
 
   // Handle Add Server submit
   const handleCreateServer = (e: React.FormEvent) => {

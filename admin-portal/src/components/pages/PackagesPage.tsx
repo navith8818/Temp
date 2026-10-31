@@ -165,8 +165,8 @@ export const PackagesPage: React.FC = () => {
       sortable: true,
       render: prod => (
         <div>
-          <div className="font-semibold text-gray-900">${prod.priceMonthly.toFixed(2)}/mo</div>
-          <div className="text-[11px] text-gray-400">${prod.priceAnnual.toFixed(2)}/yr prepaid</div>
+          <div className="font-semibold text-gray-900">LKR {prod.priceMonthly.toFixed(2)}/mo</div>
+          <div className="text-[11px] text-gray-400">LKR {prod.priceAnnual.toFixed(2)}/yr prepaid</div>
         </div>
       ),
     },
@@ -362,7 +362,7 @@ export const PackagesPage: React.FC = () => {
 
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
-                Monthly Recurring Price ($ USD) *
+                Monthly Recurring Price (LKR) *
               </label>
               <input
                 type="number"
@@ -376,7 +376,7 @@ export const PackagesPage: React.FC = () => {
 
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
-                Annual Prepaid Price ($ USD) *
+                Annual Prepaid Price (LKR) *
               </label>
               <input
                 type="number"
@@ -536,7 +536,7 @@ export const PackagesPage: React.FC = () => {
             <div className="bg-gray-50 p-4 rounded-xl border border-gray-200/80 space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-500 font-medium">Pricing</span>
-                <span className="text-sm font-bold text-gray-900">${selectedProduct.priceMonthly}/mo (${selectedProduct.priceAnnual}/yr)</span>
+                <span className="text-sm font-bold text-gray-900">LKR {selectedProduct.priceMonthly}/mo (LKR {selectedProduct.priceAnnual}/yr)</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-500 font-medium">Target Cluster</span>

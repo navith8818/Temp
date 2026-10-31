@@ -66,37 +66,68 @@ export default function ProfilePage() {
         {/* Top Profile Summary Banner */}
         <ProfileHeader />
 
-        {/* Navigation Tabs Pill Bar */}
-        <div className="shrink-0 flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-          <div className="inline-flex p-1 rounded-full bg-white border border-gray-200/80 shadow-2xs">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.key;
-              return (
-                <button
-                  key={tab.key}
-                  type="button"
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                    isActive
-                      ? 'bg-gray-900 text-white shadow-xs'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                  }`}
-                >
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#e8702a]' : 'text-gray-400'}`} />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        {/* Lower Content Area: Side Icon Bar ON LEFT SIDE + Tab Content */}
+        <div className="flex-1 min-h-0 flex flex-row gap-3 overflow-hidden">
+          {/* Side Icon Bar placed on the LEFT side of the sections with hover expansion */}
+          <aside
+            aria-label="Profile section tabs"
+            className="group/rail shrink-0 w-12 sm:w-13 hover:w-56 transition-all duration-300 ease-in-out flex flex-col items-start py-2.5 px-1.5 bg-white border border-gray-200/80 rounded-3xl shadow-xs min-h-0 z-20 overflow-hidden"
+          >
+            <div className="flex flex-col items-start gap-1.5 w-full">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.key;
+                return (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    onClick={() => setActiveTab(tab.key)}
+                    className={`group/btn relative flex items-center w-full h-10 px-2 rounded-xl transition-all cursor-pointer overflow-hidden ${
+                      isActive
+                        ? 'bg-[#fcf5f1] text-[#e8702a]'
+                        : 'text-gray-400 hover:text-gray-700 hover:bg-gray-100/70'
+                    }`}
+                    aria-label={tab.label}
+                    title={tab.label}
+                  >
+                    {/* Highlight the tab with a thin vertical line leftside of the icon */}
+                    <span
+                      className={`absolute left-0.5 top-2.5 bottom-2.5 w-[2.5px] rounded-full transition-all ${
+                        isActive ? 'bg-[#e8702a]' : 'bg-transparent'
+                      }`}
+                    />
 
-        {/* Tab Content Area (Scrollable within viewport) */}
-        <div className="flex-1 min-h-0 overflow-y-auto pr-1">
-          {activeTab === 'personal' && <PersonalDetailsSection />}
-          {activeTab === 'security' && <SecuritySettingsSection />}
-          {activeTab === 'notifications' && <NotificationsSection />}
-          {activeTab === 'danger' && <DangerZoneSection />}
+                    {/* Icon */}
+                    <div className="w-6 h-6 flex items-center justify-center shrink-0 ml-1">
+                      <Icon
+                        className={`w-4 h-4 transition-transform group-hover/btn:scale-105 ${
+                          isActive ? 'text-[#e8702a]' : 'text-gray-400 group-hover/btn:text-gray-700'
+                        }`}
+                      />
+                    </div>
+
+                    {/* Tab Name Label (Reveals on Hover Expansion) */}
+                    <div className="ml-2.5 flex items-center flex-1 min-w-0 opacity-0 group-hover/rail:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                      <span className={`text-xs font-semibold truncate ${isActive ? 'text-gray-900' : 'text-gray-600'}`}>
+                        {tab.label}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Space for expansion */}
+            <div className="flex-1 w-full min-h-[40px]" />
+          </aside>
+
+          {/* Tab Content Area (Scrollable within viewport) */}
+          <div className="flex-1 min-w-0 min-h-0 overflow-y-auto pr-1">
+            {activeTab === 'personal' && <PersonalDetailsSection />}
+            {activeTab === 'security' && <SecuritySettingsSection />}
+            {activeTab === 'notifications' && <NotificationsSection />}
+            {activeTab === 'danger' && <DangerZoneSection />}
+          </div>
         </div>
       </main>
 

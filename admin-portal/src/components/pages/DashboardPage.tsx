@@ -6,6 +6,11 @@ import { useAdminData } from '@/context/AdminDataContext';
 import { AdminMetricCard } from '@/components/ui/AdminMetricCard';
 import { AdminBadge } from '@/components/ui/AdminBadge';
 import { AdminButton } from '@/components/ui/AdminButton';
+import { RevenueOrderVelocityChart } from '@/components/charts/RevenueOrderVelocityChart';
+import { ClusterNodeCapacityChart } from '@/components/charts/ClusterNodeCapacityChart';
+import { ProvisioningThroughputChart } from '@/components/charts/ProvisioningThroughputChart';
+import { PackageTierDistributionChart } from '@/components/charts/PackageTierDistributionChart';
+
 import {
   Users,
   HardDrive,
@@ -150,7 +155,7 @@ export const DashboardPage: React.FC = () => {
         <AdminMetricCard
           label="Revenue (MTD)"
           value={`$${mtdRevenue.toFixed(2)}`}
-          subtext="Processed via PayHere & Stripe"
+          subtext="Processed via PayHere Gateway"
           icon={<DollarSign size={16} />}
           badge={{ text: '+14% MoM', variant: 'positive' }}
           onClick={() => router.push('/payments')}
@@ -194,6 +199,30 @@ export const DashboardPage: React.FC = () => {
         </div>
       )}
 
+      
+      {/* Advanced Interactive Infrastructure & Revenue Analytics Charts */}
+      <div className="space-y-6">
+        {/* Row 1: High Visual Priority — Revenue & Order Velocity (2 cols) + Automated Provisioning Throughput (1 col) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+          <div className="lg:col-span-2 flex flex-col">
+            <RevenueOrderVelocityChart />
+          </div>
+          <div className="lg:col-span-1 flex flex-col">
+            <ProvisioningThroughputChart />
+          </div>
+        </div>
+
+        {/* Row 2: Infrastructure & Distribution — Hosting Package Distribution & MRR (Left, 1 col) + Cluster Node Capacity & Density (Right, 2 cols) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          <div className="lg:col-span-1">
+            <PackageTierDistributionChart />
+          </div>
+          <div className="lg:col-span-2">
+            <ClusterNodeCapacityChart />
+          </div>
+        </div>
+      </div>
+
       {/* Secondary Operational Sections Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
@@ -236,7 +265,7 @@ export const DashboardPage: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-3 shrink-0">
-                    <span className="font-semibold text-gray-900">${order.total.toFixed(2)}</span>
+                    <span className="font-semibold text-gray-900">LKR {order.total.toFixed(2)}</span>
                     <AdminBadge
                       variant={
                         order.orderStatus === 'COMPLETED'
@@ -290,7 +319,7 @@ export const DashboardPage: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-3 shrink-0">
-                    <span className="font-semibold text-gray-900">${payment.amount.toFixed(2)}</span>
+                    <span className="font-semibold text-gray-900">LKR {payment.amount.toFixed(2)}</span>
                     <AdminBadge
                       variant={
                         payment.status === 'SUCCESS'

@@ -70,7 +70,7 @@ export const OrdersPage: React.FC = () => {
       key: 'total',
       header: 'Total',
       sortable: true,
-      render: o => <span className="font-bold text-gray-900">${o.total.toFixed(2)}</span>,
+      render: o => <span className="font-bold text-gray-900">LKR {o.total.toFixed(2)}</span>,
     },
     {
       key: 'paymentStatus',
@@ -197,7 +197,7 @@ export const OrdersPage: React.FC = () => {
               </div>
               <div>
                 <span className="text-[10px] text-gray-400 uppercase font-semibold block">Total Amount</span>
-                <span className="text-sm font-bold text-gray-900">${selectedOrder.total.toFixed(2)} USD</span>
+                <span className="text-sm font-bold text-gray-900">LKR {selectedOrder.total.toFixed(2)}</span>
               </div>
               <div>
                 <span className="text-[10px] text-gray-400 uppercase font-semibold block">Invoice Link</span>
@@ -220,7 +220,7 @@ export const OrdersPage: React.FC = () => {
                       <div className="font-semibold text-gray-900">{item.productName}</div>
                       <div className="text-[11px] text-gray-400 font-mono">Domain: {item.domain} ({item.billingCycle})</div>
                     </div>
-                    <span className="font-semibold text-gray-900">${item.amount.toFixed(2)}</span>
+                    <span className="font-semibold text-gray-900">LKR {item.amount.toFixed(2)}</span>
                   </div>
                 ))}
               </div>

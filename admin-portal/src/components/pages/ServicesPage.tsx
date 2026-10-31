@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAdminData } from '@/context/AdminDataContext';
 import type { HostingService } from '@/types';
 import { AdminTable } from '@/components/ui/AdminTable';
@@ -41,6 +41,18 @@ export const ServicesPage: React.FC = () => {
   const [isMigrateModalOpen, setIsMigrateModalOpen] = useState(false);
   const [targetServerId, setTargetServerId] = useState('');
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
+  const [productFilter, setProductFilter] = useState<string>('ALL');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const prodId = params.get('product');
+      if (prodId) {
+        setProductFilter(prodId);
+      }
+    }
+  }, []);
+
   const [targetProductId, setTargetProductId] = useState('');
 
   const isRestricted = currentRole === 'SUPPORT_AGENT';
@@ -184,7 +196,7 @@ export const ServicesPage: React.FC = () => {
       render: s => (
         <div className="text-xs">
           <div className="font-medium text-gray-800">{s.nextRenewalDate}</div>
-          <div className="text-[11px] text-gray-400">${s.renewalPrice.toFixed(2)} ({s.billingCycle.toLowerCase()})</div>
+          <div className="text-[11px] text-gray-400">LKR {s.renewalPrice.toFixed(2)} ({s.billingCycle.toLowerCase()})</div>
         </div>
       ),
     },
@@ -220,7 +232,7 @@ export const ServicesPage: React.FC = () => {
       </div>
 
       <AdminTable
-        data={services}
+        data={productFilter === 'ALL' ? services : services.filter(s => s.productId === productFilter)}
         columns={columns}
         keyExtractor={s => s.id}
         searchPlaceholder="Search services by domain, customer, server..."
@@ -472,7 +484,7 @@ export const ServicesPage: React.FC = () => {
             className="w-full bg-white border border-gray-200 rounded-lg p-2 text-xs text-gray-800"
           >
             {products.map(p => (
-              <option key={p.id} value={p.id}>{p.name} (${p.priceMonthly}/mo - {p.storageGb}GB)</option>
+              <option key={p.id} value={p.id}>{p.name} (LKR {p.priceMonthly}/mo - {p.storageGb}GB)</option>
             ))}
           </select>
         </div>

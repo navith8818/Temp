@@ -80,7 +80,7 @@ export const PaymentsPage: React.FC = () => {
       sortable: true,
       render: p => (
         <span className="font-bold text-gray-900">
-          ${p.amount.toFixed(2)} {p.currency}
+          LKR {p.amount.toFixed(2)}
         </span>
       ),
     },
@@ -102,7 +102,7 @@ export const PaymentsPage: React.FC = () => {
             {p.status}
           </AdminBadge>
           {p.refundedAmount && (
-            <div className="text-[10px] text-gray-500">Refunded: ${p.refundedAmount.toFixed(2)}</div>
+            <div className="text-[10px] text-gray-500">Refunded: LKR {p.refundedAmount.toFixed(2)}</div>
           )}
         </div>
       ),
@@ -182,7 +182,7 @@ export const PaymentsPage: React.FC = () => {
               </div>
               <div>
                 <span className="text-[10px] text-gray-400 uppercase font-semibold block">Amount</span>
-                <span className="text-sm font-bold text-gray-900">${selectedPayment.amount.toFixed(2)} {selectedPayment.currency}</span>
+                <span className="text-sm font-bold text-gray-900">LKR {selectedPayment.amount.toFixed(2)}</span>
               </div>
               <div>
                 <span className="text-[10px] text-gray-400 uppercase font-semibold block">Date Processed</span>
@@ -213,7 +213,7 @@ export const PaymentsPage: React.FC = () => {
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 space-y-1 text-amber-900">
                 <div className="font-semibold text-xs">Refund Recorded</div>
                 <p className="text-[11px]">
-                  Amount: ${selectedPayment.refundedAmount?.toFixed(2)} &bull; Reason: {selectedPayment.refundReason}
+                  Amount: LKR {selectedPayment.refundedAmount?.toFixed(2)} &bull; Reason: {selectedPayment.refundReason}
                 </p>
                 <div className="text-[10px] text-amber-700">Refunded on {selectedPayment.refundedAt || 'today'}</div>
               </div>
@@ -262,7 +262,7 @@ export const PaymentsPage: React.FC = () => {
 
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1">
-              Refund Amount ($ USD)
+              Refund Amount (LKR)
             </label>
             <input
               type="number"

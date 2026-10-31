@@ -13,7 +13,7 @@ export interface StaffMember {
   department: string;
 }
 
-export type ServerProvider = 'WHM_CPANEL' | 'PROXMOX_KVM' | 'HETZNER_CLOUD' | 'AWS_EC2';
+export type ServerProvider = 'WHM_CPANEL' | 'DIRECT_ADMIN' | 'PROXMOX_KVM' | 'HETZNER_CLOUD' | 'AWS_EC2';
 export type ServerType = 'SHARED_HOSTING' | 'VPS_NODE' | 'DEDICATED';
 export type ServerHealthStatus = 'ONLINE' | 'MAINTENANCE' | 'DEGRADED' | 'OFFLINE';
 

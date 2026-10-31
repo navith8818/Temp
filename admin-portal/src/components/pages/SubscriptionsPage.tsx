@@ -57,7 +57,7 @@ export const SubscriptionsPage: React.FC = () => {
       render: sub => (
         <div>
           <span className="font-semibold text-gray-800">{sub.nextRenewalDate}</span>
-          <div className="text-[11px] text-gray-400">${sub.renewalPrice.toFixed(2)} USD</div>
+          <div className="text-[11px] text-gray-400">LKR {sub.renewalPrice.toFixed(2)}</div>
         </div>
       ),
     },

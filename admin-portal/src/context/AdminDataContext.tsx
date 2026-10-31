@@ -933,7 +933,7 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       taxAmount: 0,
       discountAmount: 0,
       total: data.total || 25.00,
-      currency: 'USD',
+      currency: 'LKR',
       status: 'UNPAID',
       items: data.items || [{ description: 'Custom Hosting Fee', quantity: 1, unitPrice: 25.00, amount: 25.00 }],
       billingAddress: data.billingAddress || { name: 'Customer', line1: 'Billing Address', city: 'London', country: 'UK' },
