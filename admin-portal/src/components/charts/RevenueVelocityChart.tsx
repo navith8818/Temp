@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   DollarSign,
@@ -46,10 +46,34 @@ export const RevenueVelocityChart: React.FC<RevenueVelocityChartProps> = ({
 
   const points = summary.points;
 
-  // Compute SVG plotting bounds
-  const width = 760;
-  const height = 220;
-  const padding = { top: 20, right: 20, bottom: 30, left: 58 };
+  // Responsive container width tracking for seamless full-width edge-to-edge fitting
+  const [containerWidth, setContainerWidth] = useState(800);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const updateWidth = () => {
+      if (containerRef.current) {
+        const w = containerRef.current.clientWidth;
+        if (w > 0) setContainerWidth(Math.round(w));
+      }
+    };
+    updateWidth();
+
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.contentRect.width > 0) {
+          setContainerWidth(Math.round(entry.contentRect.width));
+        }
+      }
+    });
+    ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  const width = Math.max(containerWidth, 400);
+  const height = 210;
+  const padding = { top: 15, right: 10, bottom: 25, left: 56 };
 
   const plotW = width - padding.left - padding.right;
   const plotH = height - padding.top - padding.bottom;
@@ -221,7 +245,7 @@ export const RevenueVelocityChart: React.FC<RevenueVelocityChartProps> = ({
       </div>
 
       {/* Interactive Chart Container */}
-      <div className="relative w-full mt-2 flex-1 flex flex-col justify-end">
+      <div ref={containerRef} className="relative w-full mt-2 flex-1 flex flex-col justify-end">
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="w-full h-48 sm:h-52 overflow-visible select-none"

@@ -103,21 +103,18 @@ export const ProvisioningThroughputChart: React.FC<ProvisioningThroughputChartPr
   return (
     <div className="bg-white rounded-2xl border border-gray-200/90 p-5 sm:p-6 shadow-2xs h-full flex flex-col justify-between relative transition-all">
       {/* Header Row */}
-      <div className="pb-3 border-b border-gray-100 space-y-2.5">
-        <div className="flex items-center gap-2.5">
+      <div className="pb-3 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+        <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-8 h-8 rounded-lg bg-[#fcf5f1] border border-[#e8702a]/20 flex items-center justify-center text-[#e8702a] shrink-0">
             <Cpu size={17} />
           </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-bold text-gray-900 tracking-tight truncate">
-              Automated Provisioning Throughput
-            </h3>
-
-          </div>
+          <h3 className="text-sm font-bold text-gray-900 tracking-tight truncate">
+            Automated Provisioning Throughput
+          </h3>
         </div>
 
         {/* Legend with interactive isolation click */}
-        <div className="flex items-center justify-between sm:justify-start gap-2.5 sm:gap-4 text-xs pt-0.5">
+        <div className="flex items-center gap-3 text-xs shrink-0">
           <button
             onClick={() => toggleSeries('succeeded')}
             className={`flex items-center gap-1.5 transition-opacity cursor-pointer ${

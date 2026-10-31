@@ -95,7 +95,7 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Primary Metrics Grid (8 essential metrics) */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 2xl:grid-cols-8 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         <AdminMetricCard
           label="Total Customers"
           value={totalCustomers}
@@ -154,7 +154,7 @@ export const DashboardPage: React.FC = () => {
         />
         <AdminMetricCard
           label="Revenue (MTD)"
-          value={`$${mtdRevenue.toFixed(2)}`}
+          value={`LKR ${mtdRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           subtext="Processed via PayHere Gateway"
           icon={<DollarSign size={16} />}
           badge={{ text: '+14% MoM', variant: 'positive' }}
@@ -202,12 +202,12 @@ export const DashboardPage: React.FC = () => {
       
       {/* Advanced Interactive Infrastructure & Revenue Analytics Charts */}
       <div className="space-y-6">
-        {/* Row 1: High Visual Priority — Revenue & Order Velocity (2 cols) + Automated Provisioning Throughput (1 col) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-          <div className="lg:col-span-2 flex flex-col">
+        {/* Row 1: Balanced High Priority — Revenue & Order Velocity (7 cols) + Automated Provisioning Throughput (5 cols) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          <div className="lg:col-span-7 flex flex-col">
             <RevenueOrderVelocityChart />
           </div>
-          <div className="lg:col-span-1 flex flex-col">
+          <div className="lg:col-span-5 flex flex-col">
             <ProvisioningThroughputChart />
           </div>
         </div>
